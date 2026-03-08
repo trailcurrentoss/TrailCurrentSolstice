@@ -40,7 +40,7 @@
 			)
 		)
 		(instances
-			(project "trailer-mppt-can-bus"
+			(project "solstice"
 				(path "/e43102a4-dd6f-4d32-bd6d-4c06b17a0389"
 					(page "4")
 				)
@@ -82,7 +82,7 @@
 			)
 		)
 		(instances
-			(project "trailer-mppt-can-bus"
+			(project "solstice"
 				(path "/e43102a4-dd6f-4d32-bd6d-4c06b17a0389"
 					(page "3")
 				)
@@ -124,7 +124,7 @@
 			)
 		)
 		(instances
-			(project "trailer-mppt-can-bus"
+			(project "solstice"
 				(path "/e43102a4-dd6f-4d32-bd6d-4c06b17a0389"
 					(page "5")
 				)
@@ -166,7 +166,7 @@
 			)
 		)
 		(instances
-			(project "trailer-mppt-can-bus"
+			(project "solstice"
 				(path "/e43102a4-dd6f-4d32-bd6d-4c06b17a0389"
 					(page "2")
 				)

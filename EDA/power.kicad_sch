@@ -1496,7 +1496,7 @@
 			(uuid "41544bb2-0f33-47dc-bdfb-f2a122377fd7")
 		)
 		(instances
-			(project "trailer-shunt-can-bus"
+			(project "solstice"
 				(path "/e43102a4-dd6f-4d32-bd6d-4c06b17a0389/5e03bf2b-dca2-46ef-acb8-5634dd421c83"
 					(reference "L1")
 					(unit 1)
@@ -1565,7 +1565,7 @@
 			(uuid "73df2aa5-0188-471d-b49c-fb5bbd1ac1c8")
 		)
 		(instances
-			(project "trailer-shunt-can-bus"
+			(project "solstice"
 				(path "/e43102a4-dd6f-4d32-bd6d-4c06b17a0389/5e03bf2b-dca2-46ef-acb8-5634dd421c83"
 					(reference "C3")
 					(unit 1)
@@ -1697,7 +1697,7 @@
 			(uuid "7594a58d-5b55-4708-90c1-74bf34d96768")
 		)
 		(instances
-			(project "trailer-shunt-can-bus"
+			(project "solstice"
 				(path "/e43102a4-dd6f-4d32-bd6d-4c06b17a0389/5e03bf2b-dca2-46ef-acb8-5634dd421c83"
 					(reference "IC1")
 					(unit 1)
@@ -1763,7 +1763,7 @@
 			(uuid "9792e38a-93fa-4889-aa2c-22a1636508ea")
 		)
 		(instances
-			(project "trailer-shunt-can-bus"
+			(project "solstice"
 				(path "/e43102a4-dd6f-4d32-bd6d-4c06b17a0389/5e03bf2b-dca2-46ef-acb8-5634dd421c83"
 					(reference "#PWR014")
 					(unit 1)
@@ -1832,7 +1832,7 @@
 			(uuid "3a1cce3f-7a64-42bc-bb96-0852f84e4ca9")
 		)
 		(instances
-			(project "trailer-shunt-can-bus"
+			(project "solstice"
 				(path "/e43102a4-dd6f-4d32-bd6d-4c06b17a0389/5e03bf2b-dca2-46ef-acb8-5634dd421c83"
 					(reference "C6")
 					(unit 1)
@@ -1897,7 +1897,7 @@
 			(uuid "737dfa1b-6d46-4908-8947-0630d426ed95")
 		)
 		(instances
-			(project "trailer-shunt-can-bus"
+			(project "solstice"
 				(path "/e43102a4-dd6f-4d32-bd6d-4c06b17a0389/5e03bf2b-dca2-46ef-acb8-5634dd421c83"
 					(reference "#FLG05")
 					(unit 1)
@@ -1966,7 +1966,7 @@
 			(uuid "d912120e-4c42-48be-a864-76db4a6191e4")
 		)
 		(instances
-			(project "trailer-shunt-can-bus"
+			(project "solstice"
 				(path "/e43102a4-dd6f-4d32-bd6d-4c06b17a0389/5e03bf2b-dca2-46ef-acb8-5634dd421c83"
 					(reference "C5")
 					(unit 1)
@@ -2033,7 +2033,7 @@
 			(uuid "305851ba-269d-48ea-b71c-4a9836386548")
 		)
 		(instances
-			(project "trailer-shunt-can-bus"
+			(project "solstice"
 				(path "/e43102a4-dd6f-4d32-bd6d-4c06b17a0389/5e03bf2b-dca2-46ef-acb8-5634dd421c83"
 					(reference "#PWR021")
 					(unit 1)
@@ -2099,7 +2099,7 @@
 			(uuid "94aff93a-c3ac-4649-ac33-508ab20f606b")
 		)
 		(instances
-			(project "trailer-shunt-can-bus"
+			(project "solstice"
 				(path "/e43102a4-dd6f-4d32-bd6d-4c06b17a0389/5e03bf2b-dca2-46ef-acb8-5634dd421c83"
 					(reference "#PWR015")
 					(unit 1)
@@ -2168,7 +2168,7 @@
 			(uuid "f7110eba-3ef9-4bd9-bfde-b39e470b8b9f")
 		)
 		(instances
-			(project "trailer-shunt-can-bus"
+			(project "solstice"
 				(path "/e43102a4-dd6f-4d32-bd6d-4c06b17a0389/5e03bf2b-dca2-46ef-acb8-5634dd421c83"
 					(reference "C4")
 					(unit 1)
@@ -2234,7 +2234,7 @@
 			(uuid "370d9626-4827-48e0-8b5e-00029fd39018")
 		)
 		(instances
-			(project "trailer-shunt-can-bus"
+			(project "solstice"
 				(path "/e43102a4-dd6f-4d32-bd6d-4c06b17a0389/5e03bf2b-dca2-46ef-acb8-5634dd421c83"
 					(reference "#PWR020")
 					(unit 1)
@@ -2301,7 +2301,7 @@
 			(uuid "943ae3e1-4cbf-4241-8301-4b37b42fd254")
 		)
 		(instances
-			(project "trailer-shunt-can-bus"
+			(project "solstice"
 				(path "/e43102a4-dd6f-4d32-bd6d-4c06b17a0389/5e03bf2b-dca2-46ef-acb8-5634dd421c83"
 					(reference "#FLG06")
 					(unit 1)

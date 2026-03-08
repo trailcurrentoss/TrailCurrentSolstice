@@ -704,7 +704,7 @@
 			(uuid "84283c4b-a834-4d98-b755-48b9bfb1bee0")
 		)
 		(instances
-			(project "trailer-mppt-can-bus"
+			(project "solstice"
 				(path "/e43102a4-dd6f-4d32-bd6d-4c06b17a0389/49f4bb7e-8293-4f83-8e67-ff85c9912e18"
 					(reference "R3")
 					(unit 1)
@@ -914,7 +914,7 @@
 			(uuid "16558b56-0ada-4c02-9bf0-17971a779c14")
 		)
 		(instances
-			(project "trailer-mppt-can-bus"
+			(project "solstice"
 				(path "/e43102a4-dd6f-4d32-bd6d-4c06b17a0389/49f4bb7e-8293-4f83-8e67-ff85c9912e18"
 					(reference "R2")
 					(unit 1)

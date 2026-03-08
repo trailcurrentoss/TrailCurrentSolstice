@@ -449,7 +449,7 @@
     "pinned_symbol_libs": []
   },
   "meta": {
-    "filename": "trailer-mppt-can-bus.kicad_pro",
+    "filename": "solstice.kicad_pro",
     "version": 3
   },
   "net_settings": {
@@ -488,7 +488,7 @@
       "plot": "",
       "pos_files": "production/",
       "specctra_dsn": "",
-      "step": "../../CAD/trailer-shunt-can-bus.step",
+      "step": "../../CAD/solstice.step",
       "svg": "",
       "vrml": ""
     },

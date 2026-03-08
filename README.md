@@ -1,6 +1,6 @@
-# TrailCurrent MPPT CAN Gateway
+# TrailCurrent Solstice
 
-Gateway module that reads data from a Victron MPPT (Maximum Power Point Tracker) solar charge controller via serial and relays the readings over a CAN bus interface. Part of the [TrailCurrent](https://trailcurrent.com) open-source vehicle platform.
+Solar gateway module that reads data from a Victron MPPT (Maximum Power Point Tracker) solar charge controller via serial and relays the readings over a CAN bus interface. Part of the [TrailCurrent](https://trailcurrent.com) open-source vehicle platform.
 
 ## Hardware Overview
 
@@ -43,7 +43,7 @@ See [KICAD_ENVIRONMENT_SETUP.md](https://github.com/trailcurrentoss/TrailCurrent
 1. **Set up environment variables** (see Library Dependencies above)
 2. **Open KiCAD:**
    ```bash
-   kicad EDA/trailer-mppt-can-bus.kicad_pro
+   kicad EDA/solstice.kicad_pro
    ```
 3. **Verify libraries load** - All symbol and footprint libraries should resolve without errors
 4. **View 3D models** - Open PCB and press `Alt+3` to view the 3D visualization
@@ -117,13 +117,13 @@ The gateway transmits two messages at 500 kbps with a 33ms update cycle:
 
 ```
 ├── EDA/                          # KiCAD hardware design files
-│   ├── trailer-mppt-can-bus.kicad_pro
-│   ├── trailer-mppt-can-bus.kicad_sch  # Root schematic
+│   ├── solstice.kicad_pro
+│   ├── solstice.kicad_sch        # Root schematic
 │   ├── can.kicad_sch             # CAN subsystem
 │   ├── connectivity.kicad_sch    # Serial interface
 │   ├── mcu.kicad_sch             # MCU subsystem
 │   ├── power.kicad_sch           # Power subsystem
-│   └── trailer-mppt-can-bus.kicad_pcb  # PCB layout
+│   └── solstice.kicad_pcb        # PCB layout
 ├── src/                          # Firmware source
 │   ├── main.cpp                  # Victron MPPT parser and CAN transmitter
 │   ├── globals.h                 # Debug macros
