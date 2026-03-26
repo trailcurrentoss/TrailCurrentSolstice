@@ -1,23 +1,24 @@
 #pragma once
 #include "globals.h"
 #include "driver/twai.h"
-#define CAN_RX 13
+#define CAN_RX 16
 #define CAN_TX 15
 #define POLLING_RATE_MS 100
 #define CAN_SEND_MESSAGE_IDENTIFIER 0x23;
 static bool driver_installed = false;
 
+typedef void (*can_rx_callback_t)(twai_message_t &message);
+
 namespace canHelper
 {
-  void canSetup()
+  static can_rx_callback_t _rx_callback = nullptr;
+
+  void canSetup(can_rx_callback_t callback = nullptr)
   {
-    twai_general_config_t g_config = TWAI_GENERAL_CONFIG_DEFAULT((gpio_num_t)CAN_TX, (gpio_num_t)CAN_RX, TWAI_MODE_NO_ACK);
+    _rx_callback = callback;
+    twai_general_config_t g_config = TWAI_GENERAL_CONFIG_DEFAULT((gpio_num_t)CAN_TX, (gpio_num_t)CAN_RX, TWAI_MODE_NORMAL);
     twai_timing_config_t t_config = TWAI_TIMING_CONFIG_500KBITS(); // Look in the api-reference for other speed sets.
-    twai_filter_config_t f_config = {
-      .acceptance_code = (0x99),
-      .acceptance_mask = 0x1FFFFFFF,
-      .single_filter = true};
-    //twai_filter_config_t f_config = TWAI_FILTER_CONFIG_ACCEPT_ALL();
+    twai_filter_config_t f_config = TWAI_FILTER_CONFIG_ACCEPT_ALL();
     // Install TWAI driver
     if (twai_driver_install(&g_config, &t_config, &f_config) == ESP_OK)
     {
@@ -58,24 +59,10 @@ namespace canHelper
 
   static void handle_rx_message(twai_message_t &message)
   {
-    // Process received message
-    if (message.extd)
+    if (_rx_callback != nullptr)
     {
-      // debugln("Message is in Extended Format");
+      _rx_callback(message);
     }
-    else
-    {
-      // debugln("Message is in Standard Format");
-    }
-    // debugf("ID: %lx\nByte:", message.identifier);
-    /* if (!(message.rtr))
-    {      
-      for (int i = 0; i < message.data_length_code; i++)
-      {
-        debugg(" %d = %02x,", i, message.data[i]);
-      }
-      debugln("");
-    } */
   }
 
   void canLoop()

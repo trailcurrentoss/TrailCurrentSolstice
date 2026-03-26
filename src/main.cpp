@@ -4,6 +4,7 @@
 
 #define CAN_SEND_MESSAGE_SOLAR01_IDENTIFIER 0x2C;
 #define CAN_SEND_MESSAGE_SOLAR02_IDENTIFIER 0x2D;
+#define CAN_RECV_LOAD_CONTROL_IDENTIFIER 0x2E
 volatile int panelVoltageWholeNumber;
 volatile int panelVotlageDecimal;
 volatile byte solarWattageMsb;
@@ -19,16 +20,48 @@ unsigned long canStartMillis;
 unsigned long canCurrentMillis;
 const unsigned long canStatusPeriod = 33;
 
+// VE.Direct HEX protocol: send a SET command for register 0xEDAB (load output control)
+// Value: 0x00=OFF, 0x01=ON, 0x04=Default (use MPPT built-in algorithm)
+static void vedirect_set_load(uint8_t state)
+{
+  // HEX SET format: :8 ABED 00 VV CC \n
+  // Register 0xEDAB in little-endian = AB ED
+  // Checksum: (sum of all bytes including checksum) mod 256 == 0x55
+  uint8_t cmd = 0x08;
+  uint8_t reg_lo = 0xAB;
+  uint8_t reg_hi = 0xED;
+  uint8_t flags = 0x00;
+  uint8_t val = state;
+  uint8_t sum = cmd + reg_lo + reg_hi + flags + val;
+  uint8_t checksum = (0x55 - sum) & 0xFF;
+
+  char buf[16];
+  snprintf(buf, sizeof(buf), ":8%02X%02X%02X%02X%02X\n",
+           reg_lo, reg_hi, flags, val, checksum);
+  Serial1.print(buf);
+  debugf("VE.Direct HEX SET load=%d\n", state);
+}
+
+static void on_can_rx(twai_message_t &message)
+{
+  if (message.identifier == CAN_RECV_LOAD_CONTROL_IDENTIFIER && message.data_length_code >= 1)
+  {
+    uint8_t loadState = message.data[0];
+    debugf("CAN load control received: %d\n", loadState);
+    vedirect_set_load(loadState);
+  }
+}
+
 void setup()
 {
-  Serial.begin(115200); // Used for debugging and logging
+  Serial.begin(115200); // USB CDC - used for debugging and logging
   while (!Serial)
   {
     ;
     ;
   }
-  Serial2.begin(19200); // RX on pin 16, TX on pin 17
-  canHelper::canSetup();
+  Serial1.begin(19200, SERIAL_8N1, VICTRON_RX_PIN, VICTRON_TX_PIN); // RX on GPIO1, TX on GPIO2
+  canHelper::canSetup(on_can_rx);
 }
 
 static void send_mppt_message()
@@ -87,9 +120,9 @@ void loop()
   if (canCurrentMillis - canStartMillis >= canStatusPeriod)
   {
     Serial.println("Running");
-    while (Serial2.available())
+    while (Serial1.available())
     {
-      String input = Serial2.readStringUntil('\n');
+      String input = Serial1.readStringUntil('\n');
       Serial.println(input);
       // Split the input string based on the delimiter "]t"
       int startIndex = 0;
