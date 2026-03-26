@@ -7,19 +7,27 @@
 #include "driver/twai.h"
 #include "esp_log.h"
 #include "esp_timer.h"
-#include "can_helper.h"
+#include "ota.h"
 
 static const char *TAG = "solstice";
 
-#define VICTRON_RX_PIN 1
-#define VICTRON_TX_PIN 2
-#define VICTRON_UART   UART_NUM_1
+// Waveshare ESP32-S3-RS485-CAN pin assignments
+#define VICTRON_RX_PIN   1
+#define VICTRON_TX_PIN   2
+#define CAN_RX_PIN       16
+#define CAN_TX_PIN       15
+#define VICTRON_UART     UART_NUM_1
 #define VICTRON_BUF_SIZE 1024
 
-#define CAN_SEND_MESSAGE_SOLAR01_IDENTIFIER 0x2C
-#define CAN_SEND_MESSAGE_SOLAR02_IDENTIFIER 0x2D
-#define CAN_RECV_LOAD_CONTROL_IDENTIFIER    0x2E
+// CAN message identifiers
+#define CAN_ID_SOLAR_DATA1       0x2C
+#define CAN_ID_SOLAR_DATA2       0x2D
+#define CAN_ID_LOAD_CONTROL      0x2E
 
+// CAN transmit period in milliseconds
+#define CAN_STATUS_PERIOD_MS     33
+
+// Parsed Victron MPPT data
 static volatile int panel_voltage_whole;
 static volatile int panel_voltage_decimal;
 static volatile uint8_t solar_wattage_msb;
@@ -30,8 +38,6 @@ static volatile int is_panel_current_negative;
 static volatile int panel_current_whole;
 static volatile int panel_current_decimal;
 static volatile int solar_status;
-
-static const uint32_t can_status_period_ms = 33;
 
 // VE.Direct HEX protocol: send a SET command for register 0xEDAB (load output control)
 // Value: 0x00=OFF, 0x01=ON, 0x04=Default (use MPPT built-in algorithm)
@@ -52,50 +58,115 @@ static void vedirect_set_load(uint8_t state)
     ESP_LOGI(TAG, "VE.Direct HEX SET load=%d", state);
 }
 
-static void on_can_rx(twai_message_t *message)
+// ---------------------------------------------------------------------------
+// TWAI (CAN) task -- runs independently so bus errors never stall UART
+// ---------------------------------------------------------------------------
+
+static void twai_task(void *arg)
 {
-    if (message->identifier == CAN_RECV_LOAD_CONTROL_IDENTIFIER && message->data_length_code >= 1) {
-        uint8_t load_state = message->data[0];
-        ESP_LOGI(TAG, "CAN load control received: %d", load_state);
-        vedirect_set_load(load_state);
+    twai_general_config_t g_config = TWAI_GENERAL_CONFIG_DEFAULT(
+        (gpio_num_t)CAN_TX_PIN, (gpio_num_t)CAN_RX_PIN, TWAI_MODE_NORMAL);
+    twai_timing_config_t t_config = TWAI_TIMING_CONFIG_500KBITS();
+    twai_filter_config_t f_config = TWAI_FILTER_CONFIG_ACCEPT_ALL();
+
+    if (twai_driver_install(&g_config, &t_config, &f_config) != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to install TWAI driver");
+        vTaskDelete(NULL);
+        return;
+    }
+    if (twai_start() != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to start TWAI driver");
+        vTaskDelete(NULL);
+        return;
+    }
+
+    uint32_t alerts = TWAI_ALERT_RX_DATA | TWAI_ALERT_ERR_PASS |
+                      TWAI_ALERT_BUS_ERROR | TWAI_ALERT_RX_QUEUE_FULL |
+                      TWAI_ALERT_BUS_OFF | TWAI_ALERT_BUS_RECOVERED |
+                      TWAI_ALERT_ERR_ACTIVE;
+    twai_reconfigure_alerts(alerts, NULL);
+    ESP_LOGI(TAG, "TWAI driver started (NORMAL mode)");
+
+    bool bus_off = false;
+    int64_t last_tx_us = 0;
+    const int64_t tx_period_us = CAN_STATUS_PERIOD_MS * 1000LL;
+
+    while (1) {
+        uint32_t triggered;
+        twai_read_alerts(&triggered, pdMS_TO_TICKS(CAN_STATUS_PERIOD_MS));
+
+        if (triggered & TWAI_ALERT_BUS_OFF) {
+            ESP_LOGE(TAG, "TWAI bus-off, initiating recovery");
+            bus_off = true;
+            twai_initiate_recovery();
+            continue;
+        }
+
+        if (triggered & TWAI_ALERT_BUS_RECOVERED) {
+            ESP_LOGI(TAG, "TWAI bus recovered, restarting");
+            twai_start();
+            bus_off = false;
+        }
+
+        if (triggered & TWAI_ALERT_ERR_PASS) {
+            ESP_LOGW(TAG, "TWAI error passive (no peers ACKing?)");
+        }
+
+        // Drain received messages and dispatch
+        if (triggered & TWAI_ALERT_RX_DATA) {
+            twai_message_t msg;
+            while (twai_receive(&msg, 0) == ESP_OK) {
+                if (msg.rtr) continue;
+
+                if (msg.identifier == CAN_ID_OTA_TRIGGER) {
+                    ota_handle_trigger(msg.data, msg.data_length_code);
+                } else if (msg.identifier == CAN_ID_WIFI_CONFIG) {
+                    ota_handle_wifi_config(msg.data, msg.data_length_code);
+                } else if (msg.identifier == CAN_ID_LOAD_CONTROL && msg.data_length_code >= 1) {
+                    ESP_LOGI(TAG, "CAN load control received: %d", msg.data[0]);
+                    vedirect_set_load(msg.data[0]);
+                }
+            }
+        }
+
+        // Periodic transmit (skip if bus is down)
+        int64_t now_us = esp_timer_get_time();
+        if (!bus_off && (now_us - last_tx_us >= tx_period_us)) {
+            last_tx_us = now_us;
+
+            twai_message_t m1 = {
+                .identifier = CAN_ID_SOLAR_DATA1,
+                .data_length_code = 7,
+                .data = {
+                    panel_voltage_whole,
+                    panel_voltage_decimal,
+                    solar_wattage_msb,
+                    solar_wattage_lsb,
+                    battery_voltage_whole,
+                    battery_voltage_decimal,
+                    solar_status
+                }
+            };
+
+            twai_message_t m2 = {
+                .identifier = CAN_ID_SOLAR_DATA2,
+                .data_length_code = 3,
+                .data = {
+                    is_panel_current_negative,
+                    panel_current_whole,
+                    panel_current_decimal
+                }
+            };
+
+            twai_transmit(&m1, 0);
+            twai_transmit(&m2, 0);
+        }
     }
 }
 
-static void send_mppt_message(void)
-{
-    twai_message_t message = {0};
-    message.identifier = CAN_SEND_MESSAGE_SOLAR01_IDENTIFIER;
-    message.data_length_code = 7;
-    message.data[0] = panel_voltage_whole;
-    message.data[1] = panel_voltage_decimal;
-    message.data[2] = solar_wattage_msb;
-    message.data[3] = solar_wattage_lsb;
-    message.data[4] = battery_voltage_whole;
-    message.data[5] = battery_voltage_decimal;
-    message.data[6] = solar_status;
-
-    if (twai_transmit(&message, pdMS_TO_TICKS(10)) == ESP_OK) {
-        ESP_LOGD(TAG, "Message 1 queued for transmission");
-    } else {
-        ESP_LOGW(TAG, "Failed to queue message 1 for transmission");
-    }
-}
-
-static void send_mppt_message2(void)
-{
-    twai_message_t message = {0};
-    message.identifier = CAN_SEND_MESSAGE_SOLAR02_IDENTIFIER;
-    message.data_length_code = 3;
-    message.data[0] = is_panel_current_negative;
-    message.data[1] = panel_current_whole;
-    message.data[2] = panel_current_decimal;
-
-    if (twai_transmit(&message, pdMS_TO_TICKS(10)) == ESP_OK) {
-        ESP_LOGD(TAG, "Message 2 queued for transmission");
-    } else {
-        ESP_LOGW(TAG, "Failed to queue message 2 for transmission");
-    }
-}
+// ---------------------------------------------------------------------------
+// VE.Direct text protocol parser
+// ---------------------------------------------------------------------------
 
 static void process_vedirect_key_value(const char *key, const char *value)
 {
@@ -147,7 +218,6 @@ static void process_vedirect_key_value(const char *key, const char *value)
 
 static void parse_vedirect_line(const char *line)
 {
-    // VE.Direct TEXT protocol: lines are "KEY\tVALUE"
     const char *tab = strchr(line, '\t');
     if (tab == NULL) {
         return;
@@ -165,8 +235,14 @@ static void parse_vedirect_line(const char *line)
     process_vedirect_key_value(key, value);
 }
 
+// ---------------------------------------------------------------------------
+// Main application
+// ---------------------------------------------------------------------------
+
 void app_main(void)
 {
+    ota_init();
+
     // Configure UART for Victron VE.Direct
     uart_config_t uart_config = {
         .baud_rate = 19200,
@@ -180,38 +256,29 @@ void app_main(void)
     uart_param_config(VICTRON_UART, &uart_config);
     uart_set_pin(VICTRON_UART, VICTRON_TX_PIN, VICTRON_RX_PIN, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
 
-    can_helper_setup(on_can_rx);
+    ESP_LOGI(TAG, "=== TrailCurrent Solstice ===");
+    ESP_LOGI(TAG, "Hostname: %s", ota_get_hostname());
 
-    // Line buffer for VE.Direct serial data
+    // CAN runs in its own task so bus errors never block UART
+    xTaskCreate(twai_task, "twai", 4096, NULL, 5, NULL);
+
+    // Main task: read VE.Direct serial data from MPPT
     char line_buf[256];
     int line_pos = 0;
-
-    uint64_t last_can_time_us = 0;
+    uint8_t uart_byte;
 
     while (1) {
-        uint64_t now_us = esp_timer_get_time();
-        if ((now_us - last_can_time_us) >= (can_status_period_ms * 1000)) {
-            // Read all available VE.Direct data
-            uint8_t byte;
-            while (uart_read_bytes(VICTRON_UART, &byte, 1, 0) > 0) {
-                if (byte == '\n' || byte == '\r') {
-                    if (line_pos > 0) {
-                        line_buf[line_pos] = '\0';
-                        ESP_LOGD(TAG, "VE.Direct: %s", line_buf);
-                        parse_vedirect_line(line_buf);
-                        line_pos = 0;
-                    }
-                } else if (line_pos < (int)(sizeof(line_buf) - 1)) {
-                    line_buf[line_pos++] = (char)byte;
+        int len = uart_read_bytes(VICTRON_UART, &uart_byte, 1, pdMS_TO_TICKS(10));
+        if (len > 0) {
+            if (uart_byte == '\n' || uart_byte == '\r') {
+                if (line_pos > 0) {
+                    line_buf[line_pos] = '\0';
+                    parse_vedirect_line(line_buf);
+                    line_pos = 0;
                 }
+            } else if (line_pos < (int)(sizeof(line_buf) - 1)) {
+                line_buf[line_pos++] = (char)uart_byte;
             }
-
-            can_helper_loop();
-            send_mppt_message();
-            send_mppt_message2();
-            last_can_time_us = now_us;
         }
-
-        vTaskDelay(pdMS_TO_TICKS(1));
     }
 }

@@ -12,7 +12,8 @@ Solar gateway module that reads data from a Victron MPPT (Maximum Power Point Tr
   - CAN bus output at 500 kbps
   - Real-time solar panel monitoring
   - Load control via VE.Direct HEX protocol over CAN
-  - Hierarchical PCB schematic design
+  - OTA firmware updates via CAN-triggered WiFi + HTTP
+  - WiFi credential provisioning over CAN bus
 
 ## Hardware Requirements
 
@@ -97,9 +98,24 @@ The firmware parses the following VE.Direct protocol fields:
 
 ### CAN Bus Protocol
 
-The gateway transmits two messages at 500 kbps with a 33ms update cycle:
+The gateway uses the following CAN message IDs at 500 kbps:
 
-**Message 0x2C** (7 bytes) - Solar panel basics:
+**Message 0x00** (3 bytes) - OTA trigger (received):
+
+| Byte | Description |
+|------|-------------|
+| 0-2 | Target device MAC bytes (last 3 bytes, matched against hostname) |
+
+Triggers the device to connect to WiFi and start an HTTP OTA server for 3 minutes. Upload firmware with:
+```bash
+curl -X POST http://esp32-XXYYZZ.local/ota --data-binary @build/solstice.bin
+```
+
+**Message 0x01** - WiFi credential provisioning (received):
+
+Chunked protocol for sending WiFi SSID and password over CAN. Credentials are stored in NVS and persist across reboots. See `ota.h` for the protocol details.
+
+**Message 0x2C** (7 bytes) - Solar panel basics (transmitted every 33ms):
 
 | Byte | Description |
 |------|-------------|
@@ -123,19 +139,14 @@ The gateway transmits two messages at 500 kbps with a 33ms update cycle:
 
 When a 0x2E message is received over CAN, the gateway sends a VE.Direct HEX SET command to register 0xEDAB on the MPPT to control the load output.
 
-## Manufacturing
-
-- **PCB Files:** Ready for fabrication via standard PCB services (JLCPCB, OSH Park, etc.)
-- **BOM Generation:** Export BOM from KiCAD schematic (Tools > Generate BOM)
-- **JLCPCB Assembly:** See [BOM_ASSEMBLY_WORKFLOW.md](https://github.com/trailcurrentoss/TrailCurrentKiCADLibraries/blob/main/BOM_ASSEMBLY_WORKFLOW.md) for detailed assembly workflow
-
 ## Project Structure
 
 ```
 ├── main/                         # ESP-IDF firmware source
-│   ├── main.c                    # Victron MPPT parser, CAN TX/RX, load control
-│   ├── can_helper.h              # CAN bus driver header
-│   ├── can_helper.c              # CAN bus driver implementation
+│   ├── main.c                    # VE.Direct parser, CAN TX/RX, load control
+│   ├── ota.h                     # OTA update and WiFi provisioning header
+│   ├── ota.c                     # OTA update and WiFi provisioning
+│   ├── idf_component.yml         # Managed component dependencies (mdns)
 │   └── CMakeLists.txt            # Component build config
 ├── EDA/                          # KiCAD hardware design files
 │   ├── solstice.kicad_pro
@@ -147,6 +158,8 @@ When a 0x2E message is received over CAN, the gateway sends a VE.Direct HEX SET 
 │   └── solstice.kicad_pcb        # PCB layout
 ├── CAD/                          # Enclosure design
 │   └── trailcurrent-solstice-housing.FCStd
+├── partitions.csv                # Dual OTA partition table
+├── sdkconfig.defaults            # ESP-IDF build defaults
 └── CMakeLists.txt                # ESP-IDF project config
 ```
 
