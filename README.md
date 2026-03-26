@@ -8,10 +8,11 @@ Solar gateway module that reads data from a Victron MPPT (Maximum Power Point Tr
 - **Microcontroller:** ESP32-S3
 - **Function:** Serial-to-CAN bus bridge for Victron MPPT solar charge controller data
 - **Key Features:**
-  - Victron MPPT VE.Direct serial protocol parsing
+  - Victron MPPT VE.Direct TEXT protocol parsing (solar data)
+  - VE.Direct HEX GET polling for SmartShunt extended data (temperature, midpoint voltage, alarms, history)
+  - Load control via VE.Direct HEX SET protocol over CAN
   - CAN bus output at 500 kbps
   - Real-time solar panel monitoring
-  - Load control via VE.Direct HEX protocol over CAN
   - OTA firmware updates via CAN-triggered WiFi + HTTP
   - WiFi credential provisioning over CAN bus
 
@@ -82,9 +83,9 @@ idf.py -p /dev/ttyUSB0 flash
 idf.py -p /dev/ttyUSB0 monitor
 ```
 
-### Victron MPPT Parameters
+### Victron VE.Direct Parameters
 
-The firmware parses the following VE.Direct protocol fields:
+The firmware parses the following VE.Direct TEXT protocol fields from the MPPT:
 
 | Parameter | Description |
 |-----------|-------------|
@@ -95,6 +96,17 @@ The firmware parses the following VE.Direct protocol fields:
 | CS | Charge state |
 | ERR | Error code |
 | H19-H23 | Historical yield and power data |
+
+The firmware also polls the following SmartShunt registers via VE.Direct HEX GET (one every 2 seconds, ~12 s full cycle):
+
+| Register | Description |
+|----------|-------------|
+| 0xEDEC | Battery temperature (0.01 K) |
+| 0x0382 | Midpoint voltage (mV) |
+| 0x031E | Alarm reason (bitmask) |
+| 0x0300 | Deepest discharge (0.1 Ah) — H1 |
+| 0x0305 | Cumulative Ah drawn (0.1 Ah) — H6 |
+| 0x0303 | Charge cycles — H4 |
 
 ### CAN Bus Protocol
 
@@ -138,6 +150,24 @@ Chunked protocol for sending WiFi SSID and password over CAN. Credentials are st
 | 0 | Load state (0x00=OFF, 0x01=ON, 0x04=Default) |
 
 When a 0x2E message is received over CAN, the gateway sends a VE.Direct HEX SET command to register 0xEDAB on the MPPT to control the load output.
+
+**Message 0x2B** (6 bytes) - Shunt extended live data (transmitted every 33ms):
+
+| Byte | Description |
+|------|-------------|
+| 0-1 | Temperature (int16 BE, centidegrees C — multiply by 0.01 for °C) |
+| 2-3 | Midpoint voltage (uint16 BE, millivolts) |
+| 4-5 | Alarm reason (uint16 BE, bitmask) |
+
+**Message 0x2F** (6 bytes) - Shunt extended history (transmitted every 33ms):
+
+| Byte | Description |
+|------|-------------|
+| 0-1 | Deepest discharge (uint16 BE, whole Ah) |
+| 2-3 | Cumulative Ah drawn (uint16 BE, whole Ah) |
+| 4-5 | Charge cycles (uint16 BE, count) |
+
+Both shunt extended messages are populated by periodic VE.Direct HEX GET requests to the SmartShunt. Values update every ~12 seconds (6 registers polled at 2 s intervals).
 
 ## Project Structure
 

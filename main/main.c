@@ -20,14 +20,30 @@ static const char *TAG = "solstice";
 #define VICTRON_BUF_SIZE 1024
 
 // CAN message identifiers
-#define CAN_ID_SOLAR_DATA1       0x2C
-#define CAN_ID_SOLAR_DATA2       0x2D
-#define CAN_ID_LOAD_CONTROL      0x2E
+#define CAN_ID_SOLAR_DATA1       0x2C  // 44 - SolarMpptData1
+#define CAN_ID_SOLAR_DATA2       0x2D  // 45 - SolarMpptData2
+#define CAN_ID_LOAD_CONTROL      0x2E  // 46 - SolarLoadControl (RX)
+#define CAN_ID_SHUNT_EXT_LIVE    0x2B  // 43 - ShuntExtLive
+#define CAN_ID_SHUNT_EXT_HIST    0x2F  // 47 - ShuntExtHistory
 
 // CAN transmit period in milliseconds
 #define CAN_STATUS_PERIOD_MS     33
 
-// Parsed Victron MPPT data
+// VE.Direct HEX GET polling interval (cycles through all registers)
+#define HEX_GET_INTERVAL_MS      2000
+
+// SmartShunt registers polled via VE.Direct HEX GET
+static const uint16_t hex_get_registers[] = {
+    0xEDEC,  // Battery temperature (0.01 K, uint16)
+    0x0382,  // Midpoint voltage (mV, uint16)
+    0x031E,  // Alarm reason (uint16 bitmask)
+    0x0300,  // Deepest discharge (0.1 Ah, int32) — H1
+    0x0305,  // Cumulative Ah drawn (0.1 Ah, int32) — H6
+    0x0303,  // Number of charge cycles (uint32) — H4
+};
+#define NUM_HEX_REGISTERS (sizeof(hex_get_registers) / sizeof(hex_get_registers[0]))
+
+// Parsed Victron MPPT data (from TEXT protocol)
 static volatile int panel_voltage_whole;
 static volatile int panel_voltage_decimal;
 static volatile uint8_t solar_wattage_msb;
@@ -38,6 +54,44 @@ static volatile int is_panel_current_negative;
 static volatile int panel_current_whole;
 static volatile int panel_current_decimal;
 static volatile int solar_status;
+
+// Shunt extended data (from HEX GET responses)
+static volatile int16_t  shunt_temperature_cc;       // centidegrees C (°C * 100)
+static volatile uint16_t shunt_midpoint_mv;           // millivolts
+static volatile uint16_t shunt_alarm_reason;          // bitmask
+static volatile uint16_t shunt_deepest_discharge_ah;  // whole Ah
+static volatile uint16_t shunt_cumulative_ah;         // whole Ah
+static volatile uint16_t shunt_charge_cycles;
+
+// ---------------------------------------------------------------------------
+// VE.Direct HEX protocol
+// ---------------------------------------------------------------------------
+
+static uint8_t hex_nibble(char c)
+{
+    if (c >= '0' && c <= '9') return c - '0';
+    if (c >= 'A' && c <= 'F') return c - 'A' + 10;
+    if (c >= 'a' && c <= 'f') return c - 'a' + 10;
+    return 0;
+}
+
+static uint8_t hex_byte(const char *s)
+{
+    return (hex_nibble(s[0]) << 4) | hex_nibble(s[1]);
+}
+
+static void vedirect_send_get(uint16_t reg_addr)
+{
+    uint8_t cmd = 0x07;
+    uint8_t reg_lo = reg_addr & 0xFF;
+    uint8_t reg_hi = (reg_addr >> 8) & 0xFF;
+    uint8_t checksum = (0x55 - (cmd + reg_lo + reg_hi)) & 0xFF;
+
+    char buf[12];
+    snprintf(buf, sizeof(buf), ":7%02X%02X%02X\n", reg_lo, reg_hi, checksum);
+    uart_write_bytes(VICTRON_UART, buf, strlen(buf));
+    ESP_LOGD(TAG, "HEX GET 0x%04X", reg_addr);
+}
 
 // VE.Direct HEX protocol: send a SET command for register 0xEDAB (load output control)
 // Value: 0x00=OFF, 0x01=ON, 0x04=Default (use MPPT built-in algorithm)
@@ -56,6 +110,66 @@ static void vedirect_set_load(uint8_t state)
              reg_lo, reg_hi, flags, val, checksum);
     uart_write_bytes(VICTRON_UART, buf, strlen(buf));
     ESP_LOGI(TAG, "VE.Direct HEX SET load=%d", state);
+}
+
+static void process_hex_response(const char *frame)
+{
+    // GET response format after ':': 7 RRRR FF VV... CC
+    // Minimum: cmd(1) + reg(4) + flags(2) + value(2) + checksum(2) = 11 chars
+    if (frame[0] != '7') return;
+
+    size_t len = strlen(frame);
+    if (len < 11) return;
+
+    uint8_t reg_lo = hex_byte(&frame[1]);
+    uint8_t reg_hi = hex_byte(&frame[3]);
+    uint16_t reg_addr = ((uint16_t)reg_hi << 8) | reg_lo;
+    uint8_t flags = hex_byte(&frame[5]);
+
+    if (flags != 0x00) {
+        ESP_LOGW(TAG, "HEX GET 0x%04X flags=0x%02X", reg_addr, flags);
+        return;
+    }
+
+    // Value bytes sit between flags and checksum (last 2 hex chars)
+    size_t value_hex_len = len - 7 - 2;
+    if (value_hex_len < 2 || (value_hex_len % 2) != 0) return;
+
+    uint32_t value = 0;
+    size_t value_bytes = value_hex_len / 2;
+    for (size_t i = 0; i < value_bytes && i < 4; i++) {
+        value |= (uint32_t)hex_byte(&frame[7 + i * 2]) << (i * 8);
+    }
+
+    switch (reg_addr) {
+    case 0xEDEC: {
+        // Raw is 0.01 K; subtract 273.15 * 100 for centidegrees C
+        int32_t cc = (int32_t)value - 27315;
+        shunt_temperature_cc = (int16_t)cc;
+        ESP_LOGI(TAG, "Shunt temp: %.2f C", cc / 100.0f);
+        break;
+    }
+    case 0x0382:
+        shunt_midpoint_mv = (uint16_t)value;
+        ESP_LOGI(TAG, "Midpoint voltage: %u mV", (unsigned)value);
+        break;
+    case 0x031E:
+        shunt_alarm_reason = (uint16_t)value;
+        if (value) ESP_LOGW(TAG, "Alarm reason: 0x%04X", (unsigned)value);
+        break;
+    case 0x0300:
+        shunt_deepest_discharge_ah = (uint16_t)(value / 10);
+        ESP_LOGI(TAG, "Deepest discharge: %u Ah", shunt_deepest_discharge_ah);
+        break;
+    case 0x0305:
+        shunt_cumulative_ah = (uint16_t)(value / 10);
+        ESP_LOGI(TAG, "Cumulative Ah: %u", shunt_cumulative_ah);
+        break;
+    case 0x0303:
+        shunt_charge_cycles = (uint16_t)value;
+        ESP_LOGI(TAG, "Charge cycles: %u", (unsigned)value);
+        break;
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -158,8 +272,36 @@ static void twai_task(void *arg)
                 }
             };
 
+            int16_t temp = shunt_temperature_cc;
+            uint16_t midpt = shunt_midpoint_mv;
+            uint16_t alarm = shunt_alarm_reason;
+            twai_message_t m3 = {
+                .identifier = CAN_ID_SHUNT_EXT_LIVE,
+                .data_length_code = 6,
+                .data = {
+                    (temp >> 8) & 0xFF, temp & 0xFF,
+                    (midpt >> 8) & 0xFF, midpt & 0xFF,
+                    (alarm >> 8) & 0xFF, alarm & 0xFF
+                }
+            };
+
+            uint16_t dd = shunt_deepest_discharge_ah;
+            uint16_t cah = shunt_cumulative_ah;
+            uint16_t cyc = shunt_charge_cycles;
+            twai_message_t m4 = {
+                .identifier = CAN_ID_SHUNT_EXT_HIST,
+                .data_length_code = 6,
+                .data = {
+                    (dd >> 8) & 0xFF, dd & 0xFF,
+                    (cah >> 8) & 0xFF, cah & 0xFF,
+                    (cyc >> 8) & 0xFF, cyc & 0xFF
+                }
+            };
+
             twai_transmit(&m1, 0);
             twai_transmit(&m2, 0);
+            twai_transmit(&m3, 0);
+            twai_transmit(&m4, 0);
         }
     }
 }
@@ -218,6 +360,12 @@ static void process_vedirect_key_value(const char *key, const char *value)
 
 static void parse_vedirect_line(const char *line)
 {
+    // HEX protocol responses start with ':'
+    if (line[0] == ':') {
+        process_hex_response(&line[1]);
+        return;
+    }
+
     const char *tab = strchr(line, '\t');
     if (tab == NULL) {
         return;
@@ -262,10 +410,12 @@ void app_main(void)
     // CAN runs in its own task so bus errors never block UART
     xTaskCreate(twai_task, "twai", 4096, NULL, 5, NULL);
 
-    // Main task: read VE.Direct serial data from MPPT
+    // Main task: read VE.Direct serial data and poll HEX GET registers
     char line_buf[256];
     int line_pos = 0;
     uint8_t uart_byte;
+    int hex_get_index = 0;
+    int64_t last_hex_get_us = 0;
 
     while (1) {
         int len = uart_read_bytes(VICTRON_UART, &uart_byte, 1, pdMS_TO_TICKS(10));
@@ -279,6 +429,14 @@ void app_main(void)
             } else if (line_pos < (int)(sizeof(line_buf) - 1)) {
                 line_buf[line_pos++] = (char)uart_byte;
             }
+        }
+
+        // Periodic HEX GET polling — one register every 2 s, full cycle ~12 s
+        int64_t now_us = esp_timer_get_time();
+        if ((now_us - last_hex_get_us) >= ((int64_t)HEX_GET_INTERVAL_MS * 1000)) {
+            vedirect_send_get(hex_get_registers[hex_get_index]);
+            hex_get_index = (hex_get_index + 1) % NUM_HEX_REGISTERS;
+            last_hex_get_us = now_us;
         }
     }
 }
