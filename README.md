@@ -4,21 +4,23 @@ Solar gateway module that reads data from a Victron MPPT (Maximum Power Point Tr
 
 ## Hardware Overview
 
-- **Microcontroller:** ESP32
+- **Board:** [Waveshare ESP32-S3-RS485-CAN](https://www.waveshare.com/wiki/ESP32-S3-RS485-CAN)
+- **Microcontroller:** ESP32-S3
 - **Function:** Serial-to-CAN bus bridge for Victron MPPT solar charge controller data
 - **Key Features:**
   - Victron MPPT VE.Direct serial protocol parsing
   - CAN bus output at 500 kbps
   - Real-time solar panel monitoring
+  - Load control via VE.Direct HEX protocol over CAN
   - Hierarchical PCB schematic design
 
 ## Hardware Requirements
 
 ### Components
 
-- **Microcontroller:** ESP32 development board
-- **CAN Transceiver:** Vehicle CAN bus interface (TX: GPIO 15, RX: GPIO 13)
-- **Serial Input:** Victron MPPT VE.Direct connection (Serial2: TX GPIO 17, RX GPIO 16 at 19200 baud)
+- **Board:** Waveshare ESP32-S3-RS485-CAN (off-the-shelf)
+- **CAN Bus:** 500 kbps (TX: GPIO 15, RX: GPIO 16)
+- **Serial Input:** Victron MPPT VE.Direct connection (TX: GPIO 2, RX: GPIO 1 at 19200 baud)
 
 ### KiCAD Library Dependencies
 
@@ -59,18 +61,24 @@ The design uses a hierarchical schematic with dedicated sheets:
 
 ## Firmware
 
-See `src/` directory for PlatformIO-based firmware.
+ESP-IDF 5.5.2 project in the `main/` directory.
 
 **Setup:**
 ```bash
-# Install PlatformIO (if not already installed)
-pip install platformio
+# Source ESP-IDF environment
+source ~/esp/v5.5.2/esp-idf/export.sh
+
+# Set target
+idf.py set-target esp32s3
 
 # Build firmware
-pio run
+idf.py build
 
-# Upload to board
-pio run -t upload
+# Flash to board
+idf.py -p /dev/ttyUSB0 flash
+
+# Monitor serial output
+idf.py -p /dev/ttyUSB0 monitor
 ```
 
 ### Victron MPPT Parameters
@@ -107,6 +115,14 @@ The gateway transmits two messages at 500 kbps with a 33ms update cycle:
 | 0 | Current sign |
 | 1-2 | Current magnitude |
 
+**Message 0x2E** (1 byte) - Load control (received):
+
+| Byte | Description |
+|------|-------------|
+| 0 | Load state (0x00=OFF, 0x01=ON, 0x04=Default) |
+
+When a 0x2E message is received over CAN, the gateway sends a VE.Direct HEX SET command to register 0xEDAB on the MPPT to control the load output.
+
 ## Manufacturing
 
 - **PCB Files:** Ready for fabrication via standard PCB services (JLCPCB, OSH Park, etc.)
@@ -116,6 +132,11 @@ The gateway transmits two messages at 500 kbps with a 33ms update cycle:
 ## Project Structure
 
 ```
+├── main/                         # ESP-IDF firmware source
+│   ├── main.c                    # Victron MPPT parser, CAN TX/RX, load control
+│   ├── can_helper.h              # CAN bus driver header
+│   ├── can_helper.c              # CAN bus driver implementation
+│   └── CMakeLists.txt            # Component build config
 ├── EDA/                          # KiCAD hardware design files
 │   ├── solstice.kicad_pro
 │   ├── solstice.kicad_sch        # Root schematic
@@ -124,11 +145,9 @@ The gateway transmits two messages at 500 kbps with a 33ms update cycle:
 │   ├── mcu.kicad_sch             # MCU subsystem
 │   ├── power.kicad_sch           # Power subsystem
 │   └── solstice.kicad_pcb        # PCB layout
-├── src/                          # Firmware source
-│   ├── main.cpp                  # Victron MPPT parser and CAN transmitter
-│   ├── globals.h                 # Debug macros
-│   └── canHelper.h               # CAN bus configuration
-└── platformio.ini                # Build configuration
+├── CAD/                          # Enclosure design
+│   └── trailcurrent-solstice-housing.FCStd
+└── CMakeLists.txt                # ESP-IDF project config
 ```
 
 ## License
