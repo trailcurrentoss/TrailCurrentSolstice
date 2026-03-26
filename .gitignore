@@ -14,6 +14,12 @@ fp-info-cache
 .pio/
 .platformio/
 
+# ESP-IDF
+build/
+sdkconfig
+sdkconfig.old
+managed_components/
+
 # IDEs
 .vscode/
 .idea/
