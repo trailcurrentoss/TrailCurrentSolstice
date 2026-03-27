@@ -8,6 +8,7 @@
 #include "esp_log.h"
 #include "esp_timer.h"
 #include "ota.h"
+#include "discovery.h"
 
 static const char *TAG = "solstice";
 
@@ -267,6 +268,8 @@ static void twai_task(void *arg)
                     ota_handle_trigger(msg.data, msg.data_length_code);
                 } else if (msg.identifier == CAN_ID_WIFI_CONFIG) {
                     ota_handle_wifi_config(msg.data, msg.data_length_code);
+                } else if (msg.identifier == CAN_ID_DISCOVERY_TRIGGER) {
+                    discovery_handle_trigger();
                 } else if (msg.identifier == CAN_ID_LOAD_CONTROL && msg.data_length_code >= 1) {
                     ESP_LOGI(TAG, "CAN load control received: %d", msg.data[0]);
                     vedirect_set_load(msg.data[0]);
@@ -422,6 +425,7 @@ static void parse_vedirect_line(const char *line)
 void app_main(void)
 {
     ota_init();
+    discovery_init();
 
     // Configure UART for Victron VE.Direct
     uart_config_t uart_config = {

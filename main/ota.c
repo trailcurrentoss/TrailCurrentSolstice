@@ -110,12 +110,23 @@ static void save_credentials(const char *ssid, const char *password)
 // ---------------------------------------------------------------------------
 
 static esp_netif_t *s_netif = NULL;
+static volatile bool s_wifi_connecting = false;
 
-static void wifi_connect(void)
+static void wifi_event_handler(void *arg, esp_event_base_t base, int32_t id, void *data)
+{
+    if (base == WIFI_EVENT && id == WIFI_EVENT_STA_DISCONNECTED) {
+        if (s_wifi_connecting) {
+            ESP_LOGW(TAG, "WiFi disconnected, retrying...");
+            esp_wifi_connect();
+        }
+    }
+}
+
+bool wifi_connect(void)
 {
     if (!s_has_credentials) {
-        ESP_LOGE(TAG, "No WiFi credentials — OTA disabled");
-        return;
+        ESP_LOGE(TAG, "No WiFi credentials — cannot connect");
+        return false;
     }
 
     ESP_LOGI(TAG, "Connecting to WiFi: %s", s_ssid);
@@ -126,33 +137,38 @@ static void wifi_connect(void)
         s_netif = esp_netif_create_default_wifi_sta();
         wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
         esp_wifi_init(&cfg);
+        esp_event_handler_register(WIFI_EVENT, WIFI_EVENT_STA_DISCONNECTED,
+                                   &wifi_event_handler, NULL);
     }
 
     wifi_config_t wifi_config = {0};
     strncpy((char *)wifi_config.sta.ssid, s_ssid, sizeof(wifi_config.sta.ssid) - 1);
     strncpy((char *)wifi_config.sta.password, s_password, sizeof(wifi_config.sta.password) - 1);
 
+    s_wifi_connecting = true;
     esp_wifi_set_mode(WIFI_MODE_STA);
     esp_wifi_set_config(WIFI_IF_STA, &wifi_config);
     esp_wifi_start();
     esp_wifi_connect();
 
-    // Wait for connection (up to 10 seconds)
-    for (int i = 0; i < 20; i++) {
+    // Wait for AP association AND DHCP IP assignment (up to 15 seconds)
+    for (int i = 0; i < 30; i++) {
         vTaskDelay(pdMS_TO_TICKS(500));
-        wifi_ap_record_t ap;
-        if (esp_wifi_sta_get_ap_info(&ap) == ESP_OK) {
-            esp_netif_ip_info_t ip_info;
-            esp_netif_get_ip_info(s_netif, &ip_info);
+        esp_netif_ip_info_t ip_info;
+        esp_netif_get_ip_info(s_netif, &ip_info);
+        if (ip_info.ip.addr != 0) {
             ESP_LOGI(TAG, "WiFi connected, IP: " IPSTR, IP2STR(&ip_info.ip));
-            return;
+            return true;
         }
     }
-    ESP_LOGE(TAG, "WiFi connection failed");
+    s_wifi_connecting = false;
+    ESP_LOGE(TAG, "WiFi connection failed (no IP assigned)");
+    return false;
 }
 
-static void wifi_disconnect(void)
+void wifi_disconnect(void)
 {
+    s_wifi_connecting = false;
     esp_wifi_disconnect();
     esp_wifi_stop();
     ESP_LOGI(TAG, "WiFi disconnected");
@@ -319,6 +335,11 @@ const char *ota_get_hostname(void)
     return s_hostname;
 }
 
+bool ota_has_credentials(void)
+{
+    return s_has_credentials;
+}
+
 void ota_handle_trigger(const uint8_t *data, uint8_t len)
 {
     if (len < 3) return;
@@ -340,7 +361,10 @@ void ota_handle_trigger(const uint8_t *data, uint8_t len)
 
     ESP_LOGI(TAG, "=== Entering OTA mode ===");
 
-    wifi_connect();
+    if (!wifi_connect()) {
+        ESP_LOGE(TAG, "WiFi connection failed — aborting OTA");
+        return;
+    }
     mdns_start();
     httpd_handle_t server = start_ota_server();
 
