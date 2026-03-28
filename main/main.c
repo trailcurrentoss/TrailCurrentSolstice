@@ -444,7 +444,7 @@ void app_main(void)
     ESP_LOGI(TAG, "Hostname: %s", ota_get_hostname());
 
     // CAN runs in its own task so bus errors never block UART
-    xTaskCreate(twai_task, "twai", 4096, NULL, 5, NULL);
+    xTaskCreatePinnedToCore(twai_task, "twai", 4096, NULL, 5, NULL, 1);
 
     // Main task: read VE.Direct serial data and poll HEX GET registers
     char line_buf[256];
