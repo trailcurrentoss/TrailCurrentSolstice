@@ -127,6 +127,15 @@ curl -X POST http://esp32-XXYYZZ.local/ota --data-binary @build/solstice.bin
 
 Chunked protocol for sending WiFi SSID and password over CAN. Credentials are stored in NVS and persist across reboots. See `ota.h` for the protocol details.
 
+**Message 0x04** (6 bytes) - Firmware version report (transmitted once on boot):
+
+| Byte | Description |
+|------|-------------|
+| 0-2 | Last 3 bytes of device WiFi MAC (matches hostname `esp32-XXYYZZ`) |
+| 3-5 | Semantic version: major, minor, patch |
+
+Sent after CAN initialization. Headwaters uses this to track the running firmware version, including after OTA updates.
+
 **Message 0x2C** (7 bytes) - Solar panel basics (transmitted every 33ms):
 
 | Byte | Description |
