@@ -18,11 +18,16 @@ Solar gateway module that reads data from a Victron MPPT (Maximum Power Point Tr
 
 ## Hardware Requirements
 
+### Connections
+
+See [DOCS/solstice-pinout.svg](DOCS/solstice-pinout.svg) for a wiring diagram of all external connections.
+
 ### Components
 
-- **Board:** Waveshare ESP32-S3-RS485-CAN (off-the-shelf)
-- **CAN Bus:** 500 kbps (TX: GPIO 15, RX: GPIO 16)
-- **Serial Input:** Victron MPPT VE.Direct connection (TX: GPIO 2, RX: GPIO 1 at 19200 baud)
+- **Board:** [Waveshare ESP32-S3-RS485-CAN](https://www.waveshare.com/wiki/ESP32-S3-RS485-CAN#Schematic) — [schematic](DOCS/ESP32-S3-RS485-CAN-Schematic.pdf)
+- **CAN Bus:** Built-in transceiver (TX: GPIO 15, RX: GPIO 16, 500 kbps)
+- **Serial:** Victron MPPT VE.Direct connection via SH1.0 4-pin JST (RX: GPIO 1, TX: GPIO 2 at 19200 baud)
+- **Debug Console:** USB CDC (115200 baud)
 
 ### KiCAD Library Dependencies
 
@@ -197,6 +202,9 @@ Both shunt extended messages are populated by periodic VE.Direct HEX GET request
 │   └── solstice.kicad_pcb        # PCB layout
 ├── CAD/                          # Enclosure design
 │   └── trailcurrent-solstice-housing.FCStd
+├── DOCS/                         # Documentation and diagrams
+│   ├── solstice-pinout.svg       # External connection diagram
+│   └── ESP32-S3-RS485-CAN-Schematic.pdf
 ├── partitions.csv                # Dual OTA partition table
 ├── sdkconfig.defaults            # ESP-IDF build defaults
 └── CMakeLists.txt                # ESP-IDF project config
