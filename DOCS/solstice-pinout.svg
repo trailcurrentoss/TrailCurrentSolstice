@@ -102,24 +102,24 @@
   <text x="105" y="447" font-size="8" fill="#6c757d" font-weight="600">1</text>
 
   <!-- Pin circles (r=9), centered vertically in housing -->
-  <!-- Pin 1: GPIO1/RX — Yellow (active) -->
-  <circle cx="119" cy="466" r="9" fill="#ffc107" stroke="#c9a000" stroke-width="1.5"/>
-  <text x="119" y="470" text-anchor="middle" font-size="8" fill="#212529" font-weight="700">1</text>
-  <!-- Pin 2: GPIO2/TX — Orange (active — bidirectional HEX GET/SET) -->
-  <circle cx="145" cy="466" r="9" fill="#fd7e14" stroke="#c96208" stroke-width="1.5"/>
-  <text x="145" y="470" text-anchor="middle" font-size="8" fill="#fff" font-weight="700">2</text>
-  <!-- Pin 3: VCC 3.3V — Red faded (n/c) -->
-  <circle cx="171" cy="466" r="9" fill="#f8d7da" stroke="#f5c6cb" stroke-width="1.5"/>
-  <text x="171" y="470" text-anchor="middle" font-size="8" fill="#adb5bd">3</text>
-  <!-- Pin 4: GND — Black (active) -->
-  <circle cx="197" cy="466" r="9" fill="#1a1a1a" stroke="#000" stroke-width="1.5"/>
-  <text x="197" y="470" text-anchor="middle" font-size="8" fill="#fff" font-weight="700">4</text>
+  <!-- Pin 1: GND — Black (active) -->
+  <circle cx="119" cy="466" r="9" fill="#1a1a1a" stroke="#000" stroke-width="1.5"/>
+  <text x="119" y="470" text-anchor="middle" font-size="8" fill="#fff" font-weight="700">1</text>
+  <!-- Pin 2: VCC 3.3V — Red faded (n/c) -->
+  <circle cx="145" cy="466" r="9" fill="#f8d7da" stroke="#f5c6cb" stroke-width="1.5"/>
+  <text x="145" y="470" text-anchor="middle" font-size="8" fill="#adb5bd">2</text>
+  <!-- Pin 3: GPIO2/TX — Orange (active — bidirectional HEX GET/SET) -->
+  <circle cx="171" cy="466" r="9" fill="#fd7e14" stroke="#c96208" stroke-width="1.5"/>
+  <text x="171" y="470" text-anchor="middle" font-size="8" fill="#fff" font-weight="700">3</text>
+  <!-- Pin 4: GPIO1/RX — Yellow (active) -->
+  <circle cx="197" cy="466" r="9" fill="#ffc107" stroke="#c9a000" stroke-width="1.5"/>
+  <text x="197" y="470" text-anchor="middle" font-size="8" fill="#212529" font-weight="700">4</text>
 
   <!-- Signal labels below housing -->
-  <text x="119" y="494" text-anchor="middle" font-size="8" fill="#212529" font-weight="700">RX</text>
-  <text x="145" y="494" text-anchor="middle" font-size="8" fill="#212529" font-weight="700">TX</text>
-  <text x="171" y="494" text-anchor="middle" font-size="8" fill="#adb5bd">3V3</text>
-  <text x="197" y="494" text-anchor="middle" font-size="8" fill="#212529" font-weight="700">GND</text>
+  <text x="119" y="494" text-anchor="middle" font-size="8" fill="#212529" font-weight="700">GND</text>
+  <text x="145" y="494" text-anchor="middle" font-size="8" fill="#adb5bd">3V3</text>
+  <text x="171" y="494" text-anchor="middle" font-size="8" fill="#212529" font-weight="700">TX</text>
+  <text x="197" y="494" text-anchor="middle" font-size="8" fill="#212529" font-weight="700">RX</text>
 
   <!-- ===== RIGHT CONNECTOR: VE.Direct port (face view, as seen on MPPT device) ===== -->
   <!-- Outer oval connector body -->
@@ -158,27 +158,27 @@
   <line x1="70" y1="502" x2="472" y2="502" stroke="#dee2e6" stroke-width="1"/>
   <line x1="265" y1="502" x2="265" y2="580" stroke="#dee2e6" stroke-width="1" stroke-dasharray="4,3"/>
 
-  <!-- Row 1: Yellow — Pin 1 GPIO1/RX ↔ Pin 3 TX from MPPT -->
+  <!-- Row 1: Yellow — Pin 4 GPIO1/RX ↔ Pin 3 TX from MPPT -->
   <rect x="72" y="514" width="12" height="12" fill="#ffc107" rx="2"/>
-  <text x="90" y="525" font-size="10" fill="#212529" font-weight="600">Pin 1 — GPIO 1 / RX</text>
+  <text x="90" y="525" font-size="10" fill="#212529" font-weight="600">Pin 4 — GPIO 1 / RX</text>
   <line x1="200" y1="520" x2="270" y2="520" stroke="#ffc107" stroke-width="3"/>
   <circle cx="200" cy="520" r="3" fill="#ffc107"/>
   <circle cx="270" cy="520" r="3" fill="#ffc107"/>
   <rect x="272" y="514" width="12" height="12" fill="#ffc107" rx="2"/>
   <text x="290" y="525" font-size="10" fill="#212529" font-weight="600">Pin 3 — TX  (data from MPPT)</text>
 
-  <!-- Row 2: Orange — Pin 2 GPIO2/TX ↔ Pin 2 RX on MPPT (HEX commands) -->
+  <!-- Row 2: Orange — Pin 3 GPIO2/TX ↔ Pin 2 RX on MPPT (HEX commands) -->
   <rect x="72" y="532" width="12" height="12" fill="#fd7e14" rx="2"/>
-  <text x="90" y="543" font-size="10" fill="#212529" font-weight="600">Pin 2 — GPIO 2 / TX</text>
+  <text x="90" y="543" font-size="10" fill="#212529" font-weight="600">Pin 3 — GPIO 2 / TX</text>
   <line x1="200" y1="538" x2="270" y2="538" stroke="#fd7e14" stroke-width="3"/>
   <circle cx="200" cy="538" r="3" fill="#fd7e14"/>
   <circle cx="270" cy="538" r="3" fill="#fd7e14"/>
   <rect x="272" y="532" width="12" height="12" fill="#fd7e14" rx="2"/>
   <text x="290" y="543" font-size="10" fill="#212529" font-weight="600">Pin 2 — RX  (HEX GET/SET cmds)</text>
 
-  <!-- Row 3: Black — Pin 4 GND ↔ Pin 1 GND -->
+  <!-- Row 3: Black — Pin 1 GND ↔ Pin 1 GND -->
   <rect x="72" y="550" width="12" height="12" fill="#1a1a1a" rx="2"/>
-  <text x="90" y="561" font-size="10" fill="#212529" font-weight="600">Pin 4 — GND</text>
+  <text x="90" y="561" font-size="10" fill="#212529" font-weight="600">Pin 1 — GND</text>
   <line x1="200" y1="556" x2="270" y2="556" stroke="#1a1a1a" stroke-width="3"/>
   <circle cx="200" cy="556" r="3" fill="#1a1a1a"/>
   <circle cx="270" cy="556" r="3" fill="#1a1a1a"/>
@@ -186,8 +186,8 @@
   <text x="290" y="561" font-size="10" fill="#212529" font-weight="600">Pin 1 — GND</text>
 
   <!-- Notes -->
-  <text x="270" y="578" text-anchor="middle" font-size="9" fill="#6c757d" font-style="italic">Pin 3 (3V3) on JST and Pin 4 (PWR) on VE.Direct not connected</text>
-  <text x="270" y="592" text-anchor="middle" font-size="9" fill="#6c757d" font-style="italic">▲ = Pin 1 indicator · Pinout verified from board schematic (J4: IO1=Pin1, GND=Pin4)</text>
+  <text x="270" y="578" text-anchor="middle" font-size="9" fill="#6c757d" font-style="italic">Pin 2 (3V3) on JST and Pin 4 (PWR) on VE.Direct not connected</text>
+  <text x="270" y="592" text-anchor="middle" font-size="9" fill="#6c757d" font-style="italic">▲ = Pin 1 indicator · Pinout verified physical: J4 Pin1=GND, Pin2=3V3, Pin3=TX, Pin4=RX</text>
   <text x="270" y="606" text-anchor="middle" font-size="9" fill="#6c757d" font-style="italic">TX used for HEX GET (SmartShunt polling) and HEX SET (load control on MPPT)</text>
 
   <!-- =============== CAN BUS PROTOCOL SUMMARY =============== -->

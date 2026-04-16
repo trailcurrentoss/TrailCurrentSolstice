@@ -319,6 +319,19 @@ static void twai_task(void *arg)
                 }
             };
 
+            ESP_LOGD(TAG, "CAN TX 0x2C: pv=%d.%d V, solar=%dW, bv=%d.%d V, status=%d",
+                     panel_voltage_whole, panel_voltage_decimal,
+                     (solar_wattage_msb << 8) | solar_wattage_lsb,
+                     battery_voltage_whole, battery_voltage_decimal,
+                     solar_status);
+            ESP_LOGD(TAG, "CAN TX 0x2D: panel_current=%s%d.%d A",
+                     is_panel_current_negative ? "-" : "",
+                     panel_current_whole, panel_current_decimal);
+            ESP_LOGD(TAG, "CAN TX 0x2B: temp=%d cc, midpoint=%d mV, alarm=0x%04X",
+                     (int16_t)shunt_temperature_cc, (uint16_t)shunt_midpoint_mv, (uint16_t)shunt_alarm_reason);
+            ESP_LOGD(TAG, "CAN TX 0x2F: deepest=%d Ah, cumulative=%d Ah, cycles=%d",
+                     (uint16_t)shunt_deepest_discharge_ah, (uint16_t)shunt_cumulative_ah, (uint16_t)shunt_charge_cycles);
+
             twai_transmit(&m1, 0);
             twai_transmit(&m2, 0);
             twai_transmit(&m3, 0);
@@ -337,19 +350,27 @@ static void process_vedirect_key_value(const char *key, const char *value)
         float voltage = atoi(value) * 0.001f;
         battery_voltage_whole = (int)voltage;
         battery_voltage_decimal = (int)((voltage - battery_voltage_whole) * 100);
+        ESP_LOGI(TAG, "VE.Direct V (battery): %d.%02d V", battery_voltage_whole, battery_voltage_decimal);
     } else if (strcmp(key, "VPV") == 0) {
         float voltage = atoi(value) * 0.001f;
         panel_voltage_whole = (int)voltage;
         panel_voltage_decimal = (int)((voltage - panel_voltage_whole) * 100);
+        ESP_LOGI(TAG, "VE.Direct VPV (panel): %d.%02d V", panel_voltage_whole, panel_voltage_decimal);
     } else if (strcmp(key, "PPV") == 0) {
         int wattage = atoi(value);
         solar_wattage_lsb = wattage & 0xFF;
         solar_wattage_msb = (wattage >> 8) & 0xFF;
+        ESP_LOGI(TAG, "VE.Direct PPV (solar power): %d W", wattage);
     } else if (strcmp(key, "I") == 0) {
         float current = atoi(value) * 0.001f;
         panel_current_whole = (int)current;
         panel_current_decimal = (int)((current - panel_current_whole) * 100);
         is_panel_current_negative = (current < 0) ? 1 : 0;
+        ESP_LOGI(TAG, "VE.Direct I (panel current): %s%d.%02d A",
+                 is_panel_current_negative ? "-" : "", panel_current_whole, panel_current_decimal);
+    } else if (strcmp(key, "CS") == 0) {
+        solar_status = atoi(value);
+        ESP_LOGI(TAG, "VE.Direct CS (charge state): %d", solar_status);
     } else if (strcmp(key, "LOAD") == 0) {
         ESP_LOGI(TAG, "Panel Load: %s", value);
     } else if (strcmp(key, "H19") == 0) {
@@ -364,8 +385,6 @@ static void process_vedirect_key_value(const char *key, const char *value)
         ESP_LOGI(TAG, "Maximum Power Yesterday: %d W", atoi(value));
     } else if (strcmp(key, "ERR") == 0) {
         ESP_LOGW(TAG, "Error: %s", value);
-    } else if (strcmp(key, "CS") == 0) {
-        solar_status = atoi(value);
     } else if (strcmp(key, "FW") == 0) {
         ESP_LOGI(TAG, "Firmware Version: %s", value);
     } else if (strcmp(key, "PID") == 0) {
@@ -425,6 +444,7 @@ void app_main(void)
     uart_driver_install(VICTRON_UART, VICTRON_BUF_SIZE, VICTRON_BUF_SIZE, 0, NULL, 0);
     uart_param_config(VICTRON_UART, &uart_config);
     uart_set_pin(VICTRON_UART, VICTRON_TX_PIN, VICTRON_RX_PIN, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
+    ESP_LOGI(TAG, "VE.Direct UART ready: TX=GPIO%d RX=GPIO%d @ 19200", VICTRON_TX_PIN, VICTRON_RX_PIN);
 
     ESP_LOGI(TAG, "=== TrailCurrent Solstice ===");
     ESP_LOGI(TAG, "Hostname: %s", ota_get_hostname());
@@ -439,10 +459,18 @@ void app_main(void)
     uint8_t uart_byte;
     int hex_get_index = 0;
     int64_t last_hex_get_us = 0;
+    uint32_t rx_byte_count = 0;
+    int64_t last_rx_report_us = 0;
 
     while (1) {
         int len = uart_read_bytes(VICTRON_UART, &uart_byte, 1, pdMS_TO_TICKS(10));
         if (len > 0) {
+            rx_byte_count++;
+            int64_t now_report = esp_timer_get_time();
+            if ((now_report - last_rx_report_us) >= 5000000LL) {
+                ESP_LOGI(TAG, "VE.Direct RX: %"PRIu32" bytes received so far", rx_byte_count);
+                last_rx_report_us = now_report;
+            }
             if (uart_byte == '\n' || uart_byte == '\r') {
                 if (line_pos > 0) {
                     line_buf[line_pos] = '\0';
