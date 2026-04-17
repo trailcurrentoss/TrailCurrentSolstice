@@ -1,0 +1,246 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 700" font-family="Inter, Helvetica, Arial, sans-serif">
+
+  <!-- Background -->
+  <rect width="1100" height="700" fill="#f8f9fa"/>
+
+  <!-- Title bar -->
+  <rect width="1100" height="54" fill="#ffffff"/>
+  <rect y="54" width="1100" height="3" fill="#52a441"/>
+  <text x="24" y="35" font-size="16" font-weight="700" fill="#52a441">TrailCurrent Solstice</text>
+  <text x="268" y="35" font-size="13" fill="#495057">20-Pin Ribbon Cable — VE.Direct Wiring Reference</text>
+  <text x="1076" y="35" text-anchor="end" font-size="10" fill="#6c757d">IDC 2x10 connector</text>
+
+  <!-- Subtitle -->
+  <text x="550" y="82" text-anchor="middle" font-size="12" fill="#6c757d">Flat ribbon cable layout — red stripe marks Pin 1 (3.3V / 5V end)</text>
+
+  <!-- =============== RIBBON CABLE VISUALIZATION =============== -->
+  <!-- Cable body background -->
+  <rect x="40" y="100" width="1020" height="210" fill="#e9ecef" stroke="#ced4da" stroke-width="1" rx="6"/>
+
+  <!-- Wire 1: 3.3V — RED STRIPE -->
+  <rect x="52" y="108" width="46" height="194" fill="#c0392b" stroke="#922b21" stroke-width="1" rx="2"/>
+  <text x="75" y="130" text-anchor="middle" font-size="12" fill="#fff" font-weight="700">1</text>
+  <text x="75" y="148" text-anchor="middle" font-size="10" fill="#fff" font-weight="600">3.3V</text>
+  <text x="75" y="165" text-anchor="middle" font-size="9" fill="#ffd5d5">Power</text>
+  <text x="75" y="290" text-anchor="middle" font-size="8" fill="#ffd5d5">RED STRIPE</text>
+
+  <!-- Wire 2: 5V -->
+  <rect x="102" y="108" width="46" height="194" fill="#52a441" stroke="#3d7d31" stroke-width="1" rx="2"/>
+  <text x="125" y="130" text-anchor="middle" font-size="12" fill="#fff" font-weight="700">2</text>
+  <text x="125" y="148" text-anchor="middle" font-size="10" fill="#fff" font-weight="600">5V</text>
+  <text x="125" y="165" text-anchor="middle" font-size="9" fill="#d0e2c7">Power</text>
+
+  <!-- Wire 3: GND -->
+  <rect x="152" y="108" width="46" height="194" fill="#495057" stroke="#343a40" stroke-width="1" rx="2"/>
+  <text x="175" y="130" text-anchor="middle" font-size="12" fill="#dee2e6" font-weight="700">3</text>
+  <text x="175" y="148" text-anchor="middle" font-size="10" fill="#dee2e6" font-weight="600">GND</text>
+  <text x="175" y="165" text-anchor="middle" font-size="9" fill="#adb5bd">Ground</text>
+
+  <!-- Wire 4: GND -->
+  <rect x="202" y="108" width="46" height="194" fill="#495057" stroke="#343a40" stroke-width="1" rx="2"/>
+  <text x="225" y="130" text-anchor="middle" font-size="12" fill="#dee2e6" font-weight="700">4</text>
+  <text x="225" y="148" text-anchor="middle" font-size="10" fill="#dee2e6" font-weight="600">GND</text>
+  <text x="225" y="165" text-anchor="middle" font-size="9" fill="#adb5bd">Ground</text>
+
+  <!-- Wire 5: IO43 — unused -->
+  <rect x="252" y="108" width="46" height="194" fill="#dee2e6" stroke="#c0c5cb" stroke-width="1" rx="2"/>
+  <text x="275" y="130" text-anchor="middle" font-size="12" fill="#6c757d" font-weight="700">5</text>
+  <text x="275" y="148" text-anchor="middle" font-size="10" fill="#6c757d" font-weight="600">IO43</text>
+  <text x="275" y="165" text-anchor="middle" font-size="9" fill="#adb5bd">TXD0</text>
+
+  <!-- Wire 6: IO20 — USB D+ (reserved) -->
+  <rect x="302" y="108" width="46" height="194" fill="#dee2e6" stroke="#c0c5cb" stroke-width="1" rx="2"/>
+  <text x="325" y="130" text-anchor="middle" font-size="12" fill="#6c757d" font-weight="700">6</text>
+  <text x="325" y="148" text-anchor="middle" font-size="10" fill="#6c757d" font-weight="600">IO20</text>
+  <text x="325" y="165" text-anchor="middle" font-size="9" fill="#adb5bd">USB D+</text>
+
+  <!-- Wire 7: IO44 — RXD0 (unused) -->
+  <rect x="352" y="108" width="46" height="194" fill="#dee2e6" stroke="#c0c5cb" stroke-width="1" rx="2"/>
+  <text x="375" y="130" text-anchor="middle" font-size="12" fill="#6c757d" font-weight="700">7</text>
+  <text x="375" y="148" text-anchor="middle" font-size="10" fill="#6c757d" font-weight="600">IO44</text>
+  <text x="375" y="165" text-anchor="middle" font-size="9" fill="#adb5bd">RXD0</text>
+
+  <!-- Wire 8: IO19 — USB D- (reserved) -->
+  <rect x="402" y="108" width="46" height="194" fill="#dee2e6" stroke="#c0c5cb" stroke-width="1" rx="2"/>
+  <text x="425" y="130" text-anchor="middle" font-size="12" fill="#6c757d" font-weight="700">8</text>
+  <text x="425" y="148" text-anchor="middle" font-size="10" fill="#6c757d" font-weight="600">IO19</text>
+  <text x="425" y="165" text-anchor="middle" font-size="9" fill="#adb5bd">USB D-</text>
+
+  <!-- Wire 9: IO3 — MPPT TX (orange) -->
+  <rect x="452" y="108" width="46" height="194" fill="#fd7e14" stroke="#c96410" stroke-width="1" rx="2"/>
+  <text x="475" y="130" text-anchor="middle" font-size="12" fill="#fff" font-weight="700">9</text>
+  <text x="475" y="148" text-anchor="middle" font-size="10" fill="#fff" font-weight="600">IO3</text>
+  <text x="475" y="165" text-anchor="middle" font-size="9" fill="#ffe5cc">MPPT</text>
+  <text x="475" y="178" text-anchor="middle" font-size="9" fill="#ffe5cc">TX</text>
+
+  <!-- Wire 10: IO14 — MPPT RX (amber) -->
+  <rect x="502" y="108" width="46" height="194" fill="#ffc107" stroke="#cc9a06" stroke-width="1" rx="2"/>
+  <text x="525" y="130" text-anchor="middle" font-size="12" fill="#212529" font-weight="700">10</text>
+  <text x="525" y="148" text-anchor="middle" font-size="10" fill="#212529" font-weight="600">IO14</text>
+  <text x="525" y="165" text-anchor="middle" font-size="9" fill="#3d2e00">MPPT</text>
+  <text x="525" y="178" text-anchor="middle" font-size="9" fill="#3d2e00">RX</text>
+
+  <!-- Wire 11: IO4 — SmartShunt RX (blue) -->
+  <rect x="552" y="108" width="46" height="194" fill="#4a90d9" stroke="#3570ab" stroke-width="1" rx="2"/>
+  <text x="575" y="130" text-anchor="middle" font-size="12" fill="#fff" font-weight="700">11</text>
+  <text x="575" y="148" text-anchor="middle" font-size="10" fill="#fff" font-weight="600">IO4</text>
+  <text x="575" y="165" text-anchor="middle" font-size="9" fill="#d0e5f7">Shunt</text>
+  <text x="575" y="178" text-anchor="middle" font-size="9" fill="#d0e5f7">RX</text>
+
+  <!-- Wire 12: IO13 — unused -->
+  <rect x="602" y="108" width="46" height="194" fill="#dee2e6" stroke="#c0c5cb" stroke-width="1" rx="2"/>
+  <text x="625" y="130" text-anchor="middle" font-size="12" fill="#6c757d" font-weight="700">12</text>
+  <text x="625" y="148" text-anchor="middle" font-size="10" fill="#6c757d" font-weight="600">IO13</text>
+  <text x="625" y="165" text-anchor="middle" font-size="9" fill="#adb5bd">--</text>
+
+  <!-- Wire 13: IO5 — unused -->
+  <rect x="652" y="108" width="46" height="194" fill="#dee2e6" stroke="#c0c5cb" stroke-width="1" rx="2"/>
+  <text x="675" y="130" text-anchor="middle" font-size="12" fill="#6c757d" font-weight="700">13</text>
+  <text x="675" y="148" text-anchor="middle" font-size="10" fill="#6c757d" font-weight="600">IO5</text>
+  <text x="675" y="165" text-anchor="middle" font-size="9" fill="#adb5bd">--</text>
+
+  <!-- Wire 14: IO12 — unused -->
+  <rect x="702" y="108" width="46" height="194" fill="#dee2e6" stroke="#c0c5cb" stroke-width="1" rx="2"/>
+  <text x="725" y="130" text-anchor="middle" font-size="12" fill="#6c757d" font-weight="700">14</text>
+  <text x="725" y="148" text-anchor="middle" font-size="10" fill="#6c757d" font-weight="600">IO12</text>
+  <text x="725" y="165" text-anchor="middle" font-size="9" fill="#adb5bd">--</text>
+
+  <!-- Wire 15: IO6 — unused -->
+  <rect x="752" y="108" width="46" height="194" fill="#dee2e6" stroke="#c0c5cb" stroke-width="1" rx="2"/>
+  <text x="775" y="130" text-anchor="middle" font-size="12" fill="#6c757d" font-weight="700">15</text>
+  <text x="775" y="148" text-anchor="middle" font-size="10" fill="#6c757d" font-weight="600">IO6</text>
+  <text x="775" y="165" text-anchor="middle" font-size="9" fill="#adb5bd">--</text>
+
+  <!-- Wire 16: IO11 — unused -->
+  <rect x="802" y="108" width="46" height="194" fill="#dee2e6" stroke="#c0c5cb" stroke-width="1" rx="2"/>
+  <text x="825" y="130" text-anchor="middle" font-size="12" fill="#6c757d" font-weight="700">16</text>
+  <text x="825" y="148" text-anchor="middle" font-size="10" fill="#6c757d" font-weight="600">IO11</text>
+  <text x="825" y="165" text-anchor="middle" font-size="9" fill="#adb5bd">--</text>
+
+  <!-- Wire 17: IO7 — unused -->
+  <rect x="852" y="108" width="46" height="194" fill="#dee2e6" stroke="#c0c5cb" stroke-width="1" rx="2"/>
+  <text x="875" y="130" text-anchor="middle" font-size="12" fill="#6c757d" font-weight="700">17</text>
+  <text x="875" y="148" text-anchor="middle" font-size="10" fill="#6c757d" font-weight="600">IO7</text>
+  <text x="875" y="165" text-anchor="middle" font-size="9" fill="#adb5bd">--</text>
+
+  <!-- Wire 18: IO10 — unused -->
+  <rect x="902" y="108" width="46" height="194" fill="#dee2e6" stroke="#c0c5cb" stroke-width="1" rx="2"/>
+  <text x="925" y="130" text-anchor="middle" font-size="12" fill="#6c757d" font-weight="700">18</text>
+  <text x="925" y="148" text-anchor="middle" font-size="10" fill="#6c757d" font-weight="600">IO10</text>
+  <text x="925" y="165" text-anchor="middle" font-size="9" fill="#adb5bd">--</text>
+
+  <!-- Wire 19: IO8 — unused -->
+  <rect x="952" y="108" width="46" height="194" fill="#dee2e6" stroke="#c0c5cb" stroke-width="1" rx="2"/>
+  <text x="975" y="130" text-anchor="middle" font-size="12" fill="#6c757d" font-weight="700">19</text>
+  <text x="975" y="148" text-anchor="middle" font-size="10" fill="#6c757d" font-weight="600">IO8</text>
+  <text x="975" y="165" text-anchor="middle" font-size="9" fill="#adb5bd">--</text>
+
+  <!-- Wire 20: IO9 — unused -->
+  <rect x="1002" y="108" width="46" height="194" fill="#dee2e6" stroke="#c0c5cb" stroke-width="1" rx="2"/>
+  <text x="1025" y="130" text-anchor="middle" font-size="12" fill="#6c757d" font-weight="700">20</text>
+  <text x="1025" y="148" text-anchor="middle" font-size="10" fill="#6c757d" font-weight="600">IO9</text>
+  <text x="1025" y="165" text-anchor="middle" font-size="9" fill="#adb5bd">--</text>
+
+  <!-- Row origin labels below ribbon -->
+  <text x="75"   y="324" text-anchor="middle" font-size="8" fill="#6c757d">Outer</text>
+  <text x="125"  y="324" text-anchor="middle" font-size="8" fill="#6c757d">Inner</text>
+  <text x="175"  y="324" text-anchor="middle" font-size="8" fill="#6c757d">Outer</text>
+  <text x="225"  y="324" text-anchor="middle" font-size="8" fill="#6c757d">Inner</text>
+  <text x="275"  y="324" text-anchor="middle" font-size="8" fill="#6c757d">Outer</text>
+  <text x="325"  y="324" text-anchor="middle" font-size="8" fill="#6c757d">Inner</text>
+  <text x="375"  y="324" text-anchor="middle" font-size="8" fill="#6c757d">Outer</text>
+  <text x="425"  y="324" text-anchor="middle" font-size="8" fill="#6c757d">Inner</text>
+  <text x="475"  y="324" text-anchor="middle" font-size="8" fill="#fd7e14">Outer</text>
+  <text x="525"  y="324" text-anchor="middle" font-size="8" fill="#cc9a06">Inner</text>
+  <text x="575"  y="324" text-anchor="middle" font-size="8" fill="#4a90d9">Outer</text>
+  <text x="625"  y="324" text-anchor="middle" font-size="8" fill="#6c757d">Inner</text>
+  <text x="675"  y="324" text-anchor="middle" font-size="8" fill="#6c757d">Outer</text>
+  <text x="725"  y="324" text-anchor="middle" font-size="8" fill="#6c757d">Inner</text>
+  <text x="775"  y="324" text-anchor="middle" font-size="8" fill="#6c757d">Outer</text>
+  <text x="825"  y="324" text-anchor="middle" font-size="8" fill="#6c757d">Inner</text>
+  <text x="875"  y="324" text-anchor="middle" font-size="8" fill="#6c757d">Outer</text>
+  <text x="925"  y="324" text-anchor="middle" font-size="8" fill="#6c757d">Inner</text>
+  <text x="975"  y="324" text-anchor="middle" font-size="8" fill="#6c757d">Outer</text>
+  <text x="1025" y="324" text-anchor="middle" font-size="8" fill="#6c757d">Inner</text>
+
+  <!-- =============== GROUPED BY DEVICE =============== -->
+  <rect y="348" width="1100" height="3" fill="#52a441"/>
+  <text x="550" y="374" text-anchor="middle" font-size="14" font-weight="700" fill="#212529">Wires Grouped by Device</text>
+  <text x="550" y="390" text-anchor="middle" font-size="10" fill="#6c757d">Which ribbon cable wires to connect per device (wire number = pin number)</text>
+
+  <!-- MPPT VE.Direct -->
+  <rect x="40" y="408" width="320" height="170" fill="#ffffff" stroke="#fd7e14" stroke-width="2" rx="6"/>
+  <text x="200" y="432" text-anchor="middle" font-size="13" font-weight="700" fill="#c96410">MPPT VE.Direct</text>
+
+  <text x="60" y="458" font-size="11" fill="#6c757d">Wire 9</text>
+  <text x="130" y="458" font-size="11" fill="#fd7e14" font-weight="600">IO3</text>
+  <text x="195" y="458" font-size="11" fill="#212529">TX → MPPT RX</text>
+
+  <text x="60" y="480" font-size="11" fill="#6c757d">Wire 10</text>
+  <text x="130" y="480" font-size="11" fill="#cc9a06" font-weight="600">IO14</text>
+  <text x="195" y="480" font-size="11" fill="#212529">RX ← MPPT TX</text>
+
+  <text x="60" y="516" font-size="10" fill="#6c757d">Signal only — MPPT is battery-powered</text>
+  <text x="60" y="534" font-size="10" fill="#6c757d">UART1 full-duplex (load control via TX)</text>
+
+  <!-- SmartShunt VE.Direct -->
+  <rect x="390" y="408" width="320" height="170" fill="#ffffff" stroke="#4a90d9" stroke-width="2" rx="6"/>
+  <text x="550" y="432" text-anchor="middle" font-size="13" font-weight="700" fill="#3570ab">SmartShunt VE.Direct</text>
+
+  <text x="410" y="458" font-size="11" fill="#6c757d">Wire 11</text>
+  <text x="490" y="458" font-size="11" fill="#4a90d9" font-weight="600">IO4</text>
+  <text x="555" y="458" font-size="11" fill="#212529">RX ← Shunt TX</text>
+
+  <text x="410" y="494" font-size="10" fill="#6c757d">RX only — no TX wire to SmartShunt</text>
+  <text x="410" y="512" font-size="10" fill="#6c757d">Signal only — SmartShunt is battery-powered</text>
+  <text x="410" y="530" font-size="10" fill="#6c757d">UART2 receive-only</text>
+
+  <!-- DTM 4P Connector -->
+  <rect x="740" y="408" width="320" height="170" fill="#ffffff" stroke="#52a441" stroke-width="2" rx="6"/>
+  <text x="900" y="432" text-anchor="middle" font-size="13" font-weight="700" fill="#3d7d31">DTM 4P Connector</text>
+
+  <text x="760" y="456" font-size="11" fill="#6c757d">Pin 1</text>
+  <text x="818" y="456" font-size="11" fill="#fd7e14" font-weight="600">Wire 9</text>
+  <text x="882" y="456" font-size="11" fill="#212529">MPPT TX</text>
+
+  <text x="760" y="476" font-size="11" fill="#6c757d">Pin 2</text>
+  <text x="818" y="476" font-size="11" fill="#cc9a06" font-weight="600">Wire 10</text>
+  <text x="882" y="476" font-size="11" fill="#212529">MPPT RX</text>
+
+  <text x="760" y="496" font-size="11" fill="#6c757d">Pin 3</text>
+  <text x="818" y="496" font-size="11" fill="#4a90d9" font-weight="600">Wire 11</text>
+  <text x="882" y="496" font-size="11" fill="#212529">Shunt RX</text>
+
+  <text x="760" y="516" font-size="11" fill="#adb5bd">Pin 4</text>
+  <text x="818" y="516" font-size="11" fill="#adb5bd" font-weight="600">--</text>
+  <text x="882" y="516" font-size="11" fill="#adb5bd">NC (not fitted)</text>
+
+  <text x="760" y="548" font-size="10" fill="#6c757d">DTM04-4P socket, case-mount exterior</text>
+  <text x="760" y="563" font-size="10" fill="#6c757d">Mating plug: DTM06-4S (Deutsch)</text>
+
+  <!-- =============== LEGEND =============== -->
+  <rect x="40" y="598" width="1020" height="60" fill="#ffffff" stroke="#dee2e6" stroke-width="1" rx="4"/>
+  <text x="70" y="620" font-size="11" font-weight="700" fill="#212529">Legend:</text>
+  <rect x="130" y="608" width="14" height="14" fill="#fd7e14" rx="2"/>
+  <text x="150" y="620" font-size="10" fill="#495057">MPPT TX (IO3)</text>
+  <rect x="268" y="608" width="14" height="14" fill="#ffc107" rx="2"/>
+  <text x="288" y="620" font-size="10" fill="#495057">MPPT RX (IO14)</text>
+  <rect x="408" y="608" width="14" height="14" fill="#4a90d9" rx="2"/>
+  <text x="428" y="620" font-size="10" fill="#495057">SmartShunt RX (IO4)</text>
+  <rect x="574" y="608" width="14" height="14" fill="#dee2e6" stroke="#c0c5cb" stroke-width="1" rx="2"/>
+  <text x="594" y="620" font-size="10" fill="#495057">Unused</text>
+  <rect x="660" y="608" width="14" height="14" fill="#52a441" rx="2"/>
+  <text x="680" y="620" font-size="10" fill="#495057">Power</text>
+  <rect x="736" y="608" width="14" height="14" fill="#c0392b" rx="2"/>
+  <text x="756" y="620" font-size="10" fill="#495057">Red Stripe (Pin 1)</text>
+
+  <text x="70" y="646" font-size="10" fill="#c96410" font-weight="600">Note:</text>
+  <text x="108" y="646" font-size="10" fill="#6c757d">Wire 11 (IO4) is receive-only — no TX wire to SmartShunt needed. Wires 1–8 and 12–20 are unused for VE.Direct.</text>
+
+  <!-- Footer -->
+  <rect y="670" width="1100" height="30" fill="#ffffff"/>
+  <rect y="670" width="1100" height="1" fill="#dee2e6"/>
+  <text x="24" y="689" font-size="9" fill="#52a441" font-weight="600">TrailCurrent</text>
+  <text x="110" y="689" font-size="9" fill="#6c757d">Solstice v1.0 — IDC 2x10 ribbon cable pinout (standard odd/even row interleave)</text>
+
+</svg>

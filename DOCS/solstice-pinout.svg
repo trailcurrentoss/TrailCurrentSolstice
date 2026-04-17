@@ -37,21 +37,22 @@
   <rect x="273" y="252" width="28" height="44" fill="#6c757d" stroke="#495057" stroke-width="1.5" rx="2"/>
   <text x="287" y="278" text-anchor="middle" font-size="8" fill="#fff" font-weight="600">USB-C</text>
 
-  <!-- UART / SH1.0 JST connector -->
-  <rect x="308" y="262" width="36" height="24" fill="#fd7e14" stroke="#c96208" stroke-width="1.5" rx="2"/>
-  <text x="326" y="278" text-anchor="middle" font-size="8" fill="#fff" font-weight="700">UART</text>
+  <!-- IDC 2x10 ribbon header -->
+  <rect x="308" y="262" width="44" height="24" fill="#fd7e14" stroke="#c96208" stroke-width="1.5" rx="2"/>
+  <text x="330" y="274" text-anchor="middle" font-size="8" fill="#fff" font-weight="700">IDC</text>
+  <text x="330" y="284" text-anchor="middle" font-size="7" fill="#ffe5cc">Ribbon</text>
 
   <!-- ESP32-S3 chip -->
   <rect x="510" y="220" width="80" height="60" fill="#1a3f75" stroke="#0d2b52" stroke-width="1" rx="2"/>
   <text x="550" y="246" text-anchor="middle" font-size="9" fill="#8ab4f8">ESP32-S3</text>
   <text x="550" y="260" text-anchor="middle" font-size="9" fill="#8ab4f8">WROOM</text>
 
-  <!-- RS485 terminal (unused) — top of right side -->
+  <!-- RS485 terminal (unused) -->
   <rect x="795" y="180" width="30" height="44" fill="#6c757d" stroke="#495057" stroke-width="1.5" rx="2"/>
   <text x="810" y="200" text-anchor="middle" font-size="8" fill="#fff" font-weight="700">RS485</text>
   <text x="810" y="212" text-anchor="middle" font-size="7" fill="#dee2e6">unused</text>
 
-  <!-- CAN terminal — CANH Yellow / CANL Green (lower on right side) -->
+  <!-- CAN terminal — CANH Yellow / CANL Green -->
   <rect x="795" y="228" width="30" height="22" fill="#ffc107" stroke="#c9a000" stroke-width="1.5" rx="2"/>
   <text x="810" y="243" text-anchor="middle" font-size="7.5" fill="#212529" font-weight="700">CAN-H</text>
   <rect x="795" y="253" width="30" height="22" fill="#198754" stroke="#146c43" stroke-width="1.5" rx="2"/>
@@ -71,138 +72,155 @@
   <polyline points="856,239 828,239" fill="none" stroke="#ffc107" stroke-width="2" marker-end="url(#arr-can-h)"/>
   <polyline points="856,264 828,264" fill="none" stroke="#198754" stroke-width="2" marker-end="url(#arr-can-l)"/>
 
-  <!-- =============== UART CABLE ROUTE =============== -->
-  <polyline points="326,286 326,358 148,358 148,378"
+  <!-- =============== RIBBON CABLE ROUTE =============== -->
+  <polyline points="330,286 330,358 148,358 148,378"
     fill="none" stroke="#fd7e14" stroke-width="2.5" stroke-dasharray="6,3" marker-end="url(#arr-uart)"/>
-  <text x="336" y="328" font-size="11" fill="#fd7e14" font-weight="600">VE.Direct</text>
-  <text x="336" y="344" font-size="10" fill="#fd7e14">cable</text>
+  <text x="340" y="328" font-size="11" fill="#fd7e14" font-weight="600">Ribbon</text>
+  <text x="340" y="344" font-size="10" fill="#fd7e14">cable</text>
 
   <!-- =============== WIRING DETAIL BLOCK =============== -->
-  <rect x="60" y="378" width="420" height="254" fill="#ffffff" stroke="#dee2e6" stroke-width="1.5" rx="6"/>
+  <rect x="60" y="378" width="420" height="260" fill="#ffffff" stroke="#dee2e6" stroke-width="1.5" rx="6"/>
 
   <!-- Block title -->
-  <text x="270" y="400" text-anchor="middle" font-size="13" font-weight="700" fill="#212529">VE.Direct Connection Detail</text>
+  <text x="270" y="400" text-anchor="middle" font-size="13" font-weight="700" fill="#212529">VE.Direct ↔ DTM 4P Connection Detail</text>
   <line x1="70" y1="408" x2="472" y2="408" stroke="#dee2e6" stroke-width="1"/>
 
   <!-- Column headers -->
-  <text x="163" y="422" text-anchor="middle" font-size="11" font-weight="600" fill="#495057">Waveshare SH1.0 JST</text>
-  <text x="163" y="434" text-anchor="middle" font-size="9" fill="#6c757d">4-pin board connector (J4)</text>
-  <text x="370" y="422" text-anchor="middle" font-size="11" font-weight="600" fill="#495057">VE.Direct — Victron MPPT</text>
-  <text x="370" y="434" text-anchor="middle" font-size="9" fill="#6c757d">4-pin JST-PH port</text>
+  <text x="160" y="422" text-anchor="middle" font-size="11" font-weight="600" fill="#495057">DTM 4P (case exterior)</text>
+  <text x="160" y="434" text-anchor="middle" font-size="9" fill="#6c757d">face view, looking from outside</text>
+  <text x="370" y="422" text-anchor="middle" font-size="11" font-weight="600" fill="#495057">VE.Direct Connectors</text>
+  <text x="370" y="434" text-anchor="middle" font-size="9" fill="#6c757d">face view on each Victron device, pin 1 left</text>
 
   <!-- Vertical column divider -->
-  <line x1="265" y1="412" x2="265" y2="506" stroke="#dee2e6" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="265" y1="412" x2="265" y2="548" stroke="#dee2e6" stroke-width="1" stroke-dasharray="4,3"/>
 
-  <!-- ===== LEFT CONNECTOR: Waveshare SH1.0 JST ===== -->
+  <!-- ===== LEFT CONNECTOR: DTM 4P (2x2 arrangement) ===== -->
   <!-- Housing outline -->
-  <rect x="102" y="450" width="130" height="32" fill="#e9ecef" stroke="#6c757d" stroke-width="1.5" rx="3"/>
-  <!-- Pin 1 corner triangle (standard connector marker) -->
-  <polygon points="102,450 118,450 102,466" fill="#6c757d"/>
-  <!-- Pin 1 label above triangle -->
-  <text x="105" y="447" font-size="8" fill="#6c757d" font-weight="600">1</text>
+  <rect x="88" y="444" width="88" height="62" fill="#e9ecef" stroke="#6c757d" stroke-width="1.5" rx="4"/>
+  <!-- Pin 1 corner triangle -->
+  <polygon points="88,444 104,444 88,460" fill="#6c757d"/>
+  <text x="91" y="456" font-size="7.5" fill="#fff" font-weight="700">1</text>
 
-  <!-- Pin circles (r=9), centered vertically in housing -->
-  <!-- Pin 1: GND — Black (active) -->
-  <circle cx="119" cy="466" r="9" fill="#1a1a1a" stroke="#000" stroke-width="1.5"/>
-  <text x="119" y="470" text-anchor="middle" font-size="8" fill="#fff" font-weight="700">1</text>
-  <!-- Pin 2: VCC 3.3V — Red faded (n/c) -->
-  <circle cx="145" cy="466" r="9" fill="#f8d7da" stroke="#f5c6cb" stroke-width="1.5"/>
-  <text x="145" y="470" text-anchor="middle" font-size="8" fill="#adb5bd">2</text>
-  <!-- Pin 3: GPIO2/TX — Orange (active — bidirectional HEX GET/SET) -->
-  <circle cx="171" cy="466" r="9" fill="#fd7e14" stroke="#c96208" stroke-width="1.5"/>
-  <text x="171" y="470" text-anchor="middle" font-size="8" fill="#fff" font-weight="700">3</text>
-  <!-- Pin 4: GPIO1/RX — Yellow (active) -->
-  <circle cx="197" cy="466" r="9" fill="#ffc107" stroke="#c9a000" stroke-width="1.5"/>
-  <text x="197" y="470" text-anchor="middle" font-size="8" fill="#212529" font-weight="700">4</text>
+  <!-- Pin 1: MPPT TX (orange) — top-left -->
+  <circle cx="114" cy="464" r="11" fill="#fd7e14" stroke="#c96208" stroke-width="1.5"/>
+  <text x="114" y="468" text-anchor="middle" font-size="9" fill="#fff" font-weight="700">1</text>
 
-  <!-- Signal labels below housing -->
-  <text x="119" y="494" text-anchor="middle" font-size="8" fill="#212529" font-weight="700">GND</text>
-  <text x="145" y="494" text-anchor="middle" font-size="8" fill="#adb5bd">3V3</text>
-  <text x="171" y="494" text-anchor="middle" font-size="8" fill="#212529" font-weight="700">TX</text>
-  <text x="197" y="494" text-anchor="middle" font-size="8" fill="#212529" font-weight="700">RX</text>
+  <!-- Pin 2: MPPT RX (amber) — top-right -->
+  <circle cx="154" cy="464" r="11" fill="#ffc107" stroke="#c9a000" stroke-width="1.5"/>
+  <text x="154" y="468" text-anchor="middle" font-size="9" fill="#212529" font-weight="700">2</text>
 
-  <!-- ===== RIGHT CONNECTOR: VE.Direct port (face view, as seen on MPPT device) ===== -->
-  <!-- Outer oval connector body -->
-  <ellipse cx="372" cy="462" rx="54" ry="23" fill="#e9ecef" stroke="#6c757d" stroke-width="1.5"/>
+  <!-- Pin 3: Shunt RX (blue) — bottom-left -->
+  <circle cx="114" cy="493" r="11" fill="#4a90d9" stroke="#3570ab" stroke-width="1.5"/>
+  <text x="114" y="497" text-anchor="middle" font-size="9" fill="#fff" font-weight="700">3</text>
 
-  <!-- Inner housing: main body + two locking ears at top corners. -->
-  <path d="M 326,448 L 340,448 L 340,456 L 404,456 L 404,448 L 418,448 L 418,477 L 326,477 Z"
-    fill="#f8f9fa" stroke="#6c757d" stroke-width="1.5"/>
+  <!-- Pin 4: NC (gray) — bottom-right -->
+  <circle cx="154" cy="493" r="11" fill="#dee2e6" stroke="#adb5bd" stroke-width="1.5"/>
+  <text x="154" y="497" text-anchor="middle" font-size="9" fill="#adb5bd" font-weight="700">4</text>
 
-  <!-- Pin 1 orientation label to the left of the oval -->
-  <text x="316" y="466" text-anchor="end" font-size="9" fill="#6c757d" font-weight="700">1▸</text>
+  <!-- ===== RIGHT SIDE: Victron MPPT VE.Direct ===== -->
+  <text x="370" y="452" text-anchor="middle" font-size="10" font-weight="600" fill="#212529">Victron MPPT</text>
 
-  <!-- Pin holes — colored by function, numbers below -->
-  <!-- Pin 1: GND — Black (active) -->
-  <circle cx="336" cy="466" r="7" fill="#1a1a1a" stroke="#000" stroke-width="1.5"/>
-  <!-- Pin 2: RX on MPPT — Orange (active — receives HEX GET/SET commands from ESP32) -->
-  <circle cx="358" cy="466" r="7" fill="#fd7e14" stroke="#c96208" stroke-width="1.5"/>
-  <!-- Pin 3: TX from MPPT — Yellow (active) -->
-  <circle cx="380" cy="466" r="7" fill="#ffc107" stroke="#c9a000" stroke-width="1.5"/>
-  <!-- Pin 4: PWR+ — Red faded (n/c) -->
-  <circle cx="402" cy="466" r="7" fill="#f8d7da" stroke="#f5c6cb" stroke-width="1.5"/>
+  <!-- MPPT housing rect -->
+  <rect x="289" y="456" width="162" height="26" fill="#e9ecef" stroke="#6c757d" stroke-width="1.5" rx="3"/>
+  <!-- Pin 1 corner triangle -->
+  <polygon points="289,456 303,456 289,470" fill="#6c757d"/>
+  <text x="291" y="466" font-size="7" fill="#fff" font-weight="700">1</text>
 
-  <!-- Pin numbers below holes -->
-  <text x="336" y="482" text-anchor="middle" font-size="8" fill="#495057">1</text>
-  <text x="358" y="482" text-anchor="middle" font-size="8" fill="#495057">2</text>
-  <text x="380" y="482" text-anchor="middle" font-size="8" fill="#495057">3</text>
-  <text x="402" y="482" text-anchor="middle" font-size="8" fill="#adb5bd">4</text>
+  <!-- MPPT Pins (r=9): 1=GND(black), 2=RX(orange), 3=TX(amber), 4=PWR(faded) -->
+  <circle cx="309" cy="469" r="9" fill="#1a1a1a" stroke="#000" stroke-width="1.5"/>
+  <circle cx="334" cy="469" r="9" fill="#fd7e14" stroke="#c96208" stroke-width="1.5"/>
+  <circle cx="359" cy="469" r="9" fill="#ffc107" stroke="#c9a000" stroke-width="1.5"/>
+  <circle cx="384" cy="469" r="9" fill="#f8d7da" stroke="#f5c6cb" stroke-width="1.5"/>
 
-  <!-- Signal labels below -->
-  <text x="336" y="494" text-anchor="middle" font-size="8" fill="#212529" font-weight="700">GND</text>
-  <text x="358" y="494" text-anchor="middle" font-size="8" fill="#212529" font-weight="700">RX</text>
-  <text x="380" y="494" text-anchor="middle" font-size="8" fill="#212529" font-weight="700">TX</text>
-  <text x="402" y="494" text-anchor="middle" font-size="8" fill="#adb5bd">PWR</text>
+  <!-- MPPT Pin numbers inside -->
+  <text x="309" y="473" text-anchor="middle" font-size="8" fill="#fff" font-weight="700">1</text>
+  <text x="334" y="473" text-anchor="middle" font-size="8" fill="#fff" font-weight="700">2</text>
+  <text x="359" y="473" text-anchor="middle" font-size="8" fill="#212529" font-weight="700">3</text>
+  <text x="384" y="473" text-anchor="middle" font-size="8" fill="#adb5bd" font-weight="700">4</text>
+
+  <!-- MPPT Signal labels below -->
+  <text x="309" y="492" text-anchor="middle" font-size="8" fill="#212529" font-weight="700">GND</text>
+  <text x="334" y="492" text-anchor="middle" font-size="8" fill="#212529" font-weight="700">RX</text>
+  <text x="359" y="492" text-anchor="middle" font-size="8" fill="#212529" font-weight="700">TX</text>
+  <text x="384" y="492" text-anchor="middle" font-size="8" fill="#adb5bd">PWR</text>
+
+  <!-- ===== RIGHT SIDE: Victron SmartShunt VE.Direct ===== -->
+  <text x="370" y="504" text-anchor="middle" font-size="10" font-weight="600" fill="#212529">Victron SmartShunt</text>
+
+  <!-- SmartShunt housing rect -->
+  <rect x="289" y="507" width="162" height="26" fill="#e9ecef" stroke="#6c757d" stroke-width="1.5" rx="3"/>
+  <!-- Pin 1 corner triangle -->
+  <polygon points="289,507 303,507 289,521" fill="#6c757d"/>
+  <text x="291" y="517" font-size="7" fill="#fff" font-weight="700">1</text>
+
+  <!-- SmartShunt Pins: 1=GND(black), 2=NC(faded), 3=TX(blue), 4=NC(faded) -->
+  <circle cx="309" cy="520" r="9" fill="#1a1a1a" stroke="#000" stroke-width="1.5"/>
+  <circle cx="334" cy="520" r="9" fill="#dee2e6" stroke="#adb5bd" stroke-width="1.5"/>
+  <circle cx="359" cy="520" r="9" fill="#4a90d9" stroke="#3570ab" stroke-width="1.5"/>
+  <circle cx="384" cy="520" r="9" fill="#dee2e6" stroke="#adb5bd" stroke-width="1.5"/>
+
+  <!-- SmartShunt Pin numbers -->
+  <text x="309" y="524" text-anchor="middle" font-size="8" fill="#fff" font-weight="700">1</text>
+  <text x="334" y="524" text-anchor="middle" font-size="8" fill="#adb5bd" font-weight="700">2</text>
+  <text x="359" y="524" text-anchor="middle" font-size="8" fill="#fff" font-weight="700">3</text>
+  <text x="384" y="524" text-anchor="middle" font-size="8" fill="#adb5bd" font-weight="700">4</text>
+
+  <!-- SmartShunt Signal labels below -->
+  <text x="309" y="543" text-anchor="middle" font-size="8" fill="#212529" font-weight="700">GND</text>
+  <text x="334" y="543" text-anchor="middle" font-size="8" fill="#adb5bd">--</text>
+  <text x="359" y="543" text-anchor="middle" font-size="8" fill="#212529" font-weight="700">TX</text>
+  <text x="384" y="543" text-anchor="middle" font-size="8" fill="#adb5bd">--</text>
 
   <!-- ===== CONNECTION TABLE (below connectors) ===== -->
-  <line x1="70" y1="502" x2="472" y2="502" stroke="#dee2e6" stroke-width="1"/>
-  <line x1="265" y1="502" x2="265" y2="580" stroke="#dee2e6" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="70" y1="550" x2="472" y2="550" stroke="#dee2e6" stroke-width="1"/>
+  <line x1="265" y1="550" x2="265" y2="626" stroke="#dee2e6" stroke-width="1" stroke-dasharray="4,3"/>
 
-  <!-- Row 1: Yellow — Pin 4 GPIO1/RX ↔ Pin 3 TX from MPPT -->
-  <rect x="72" y="514" width="12" height="12" fill="#ffc107" rx="2"/>
-  <text x="90" y="525" font-size="10" fill="#212529" font-weight="600">Pin 4 — GPIO 1 / RX</text>
-  <line x1="200" y1="520" x2="270" y2="520" stroke="#ffc107" stroke-width="3"/>
-  <circle cx="200" cy="520" r="3" fill="#ffc107"/>
-  <circle cx="270" cy="520" r="3" fill="#ffc107"/>
-  <rect x="272" y="514" width="12" height="12" fill="#ffc107" rx="2"/>
-  <text x="290" y="525" font-size="10" fill="#212529" font-weight="600">Pin 3 — TX  (data from MPPT)</text>
+  <!-- Row 1: orange — DTM Pin 1 (IO3) → MPPT Pin 2 (RX) -->
+  <rect x="72" y="560" width="12" height="12" fill="#fd7e14" rx="2"/>
+  <text x="90" y="571" font-size="10" fill="#212529" font-weight="600">Pin 1 — Wire 9 — IO3  →</text>
+  <line x1="210" y1="566" x2="270" y2="566" stroke="#fd7e14" stroke-width="3"/>
+  <circle cx="210" cy="566" r="3" fill="#fd7e14"/>
+  <circle cx="270" cy="566" r="3" fill="#fd7e14"/>
+  <rect x="272" y="560" width="12" height="12" fill="#fd7e14" rx="2"/>
+  <text x="290" y="571" font-size="10" fill="#212529" font-weight="600">MPPT Pin 2 — RX  (load control TX)</text>
 
-  <!-- Row 2: Orange — Pin 3 GPIO2/TX ↔ Pin 2 RX on MPPT (HEX commands) -->
-  <rect x="72" y="532" width="12" height="12" fill="#fd7e14" rx="2"/>
-  <text x="90" y="543" font-size="10" fill="#212529" font-weight="600">Pin 3 — GPIO 2 / TX</text>
-  <line x1="200" y1="538" x2="270" y2="538" stroke="#fd7e14" stroke-width="3"/>
-  <circle cx="200" cy="538" r="3" fill="#fd7e14"/>
-  <circle cx="270" cy="538" r="3" fill="#fd7e14"/>
-  <rect x="272" y="532" width="12" height="12" fill="#fd7e14" rx="2"/>
-  <text x="290" y="543" font-size="10" fill="#212529" font-weight="600">Pin 2 — RX  (HEX GET/SET cmds)</text>
+  <!-- Row 2: amber — DTM Pin 2 (IO14) ← MPPT Pin 3 (TX) -->
+  <rect x="72" y="578" width="12" height="12" fill="#ffc107" rx="2"/>
+  <text x="90" y="589" font-size="10" fill="#212529" font-weight="600">Pin 2 — Wire 10 — IO14 ←</text>
+  <line x1="210" y1="584" x2="270" y2="584" stroke="#ffc107" stroke-width="3"/>
+  <circle cx="210" cy="584" r="3" fill="#ffc107"/>
+  <circle cx="270" cy="584" r="3" fill="#ffc107"/>
+  <rect x="272" y="578" width="12" height="12" fill="#ffc107" rx="2"/>
+  <text x="290" y="589" font-size="10" fill="#212529" font-weight="600">MPPT Pin 3 — TX  (solar data RX)</text>
 
-  <!-- Row 3: Black — Pin 1 GND ↔ Pin 1 GND -->
-  <rect x="72" y="550" width="12" height="12" fill="#1a1a1a" rx="2"/>
-  <text x="90" y="561" font-size="10" fill="#212529" font-weight="600">Pin 1 — GND</text>
-  <line x1="200" y1="556" x2="270" y2="556" stroke="#1a1a1a" stroke-width="3"/>
-  <circle cx="200" cy="556" r="3" fill="#1a1a1a"/>
-  <circle cx="270" cy="556" r="3" fill="#1a1a1a"/>
-  <rect x="272" y="550" width="12" height="12" fill="#1a1a1a" rx="2"/>
-  <text x="290" y="561" font-size="10" fill="#212529" font-weight="600">Pin 1 — GND</text>
+  <!-- Row 3: blue — DTM Pin 3 (IO4) ← SmartShunt Pin 3 (TX) -->
+  <rect x="72" y="596" width="12" height="12" fill="#4a90d9" rx="2"/>
+  <text x="90" y="607" font-size="10" fill="#212529" font-weight="600">Pin 3 — Wire 11 — IO4  ←</text>
+  <line x1="210" y1="602" x2="270" y2="602" stroke="#4a90d9" stroke-width="3"/>
+  <circle cx="210" cy="602" r="3" fill="#4a90d9"/>
+  <circle cx="270" cy="602" r="3" fill="#4a90d9"/>
+  <rect x="272" y="596" width="12" height="12" fill="#4a90d9" rx="2"/>
+  <text x="290" y="607" font-size="10" fill="#212529" font-weight="600">SmartShunt Pin 3 — TX  (RX only)</text>
 
   <!-- Notes -->
-  <text x="270" y="578" text-anchor="middle" font-size="9" fill="#6c757d" font-style="italic">Pin 2 (3V3) on JST and Pin 4 (PWR) on VE.Direct not connected</text>
-  <text x="270" y="592" text-anchor="middle" font-size="9" fill="#6c757d" font-style="italic">▲ = Pin 1 indicator · Pinout verified physical: J4 Pin1=GND, Pin2=3V3, Pin3=TX, Pin4=RX</text>
-  <text x="270" y="606" text-anchor="middle" font-size="9" fill="#6c757d" font-style="italic">TX used for HEX GET (SmartShunt polling) and HEX SET (load control on MPPT)</text>
+  <text x="270" y="623" text-anchor="middle" font-size="9" fill="#6c757d" font-style="italic">GND shared via CAN bus — no ground wire in ribbon cable  ·  DTM Pin 4 not fitted  ·  MPPT Pin 4 (PWR) and Shunt Pins 2/4 not connected</text>
 
   <!-- =============== CAN BUS PROTOCOL SUMMARY =============== -->
   <rect x="500" y="370" width="576" height="160" fill="#ffffff" stroke="#dee2e6" stroke-width="1.5" rx="6"/>
   <text x="788" y="394" text-anchor="middle" font-size="13" font-weight="700" fill="#212529">CAN Bus Messages</text>
 
-  <text x="520" y="416" font-size="11" fill="#198754" font-weight="700">TX (Solar Data @ ~33 ms)</text>
-  <text x="520" y="432" font-size="10" fill="#495057">0x2C  Solar Basics   [vpv_msb, vpv_lsb, ppv_msb, ppv_lsb, vbat_msb, vbat_lsb, cs]</text>
-  <text x="520" y="446" font-size="10" fill="#495057">0x2D  Solar Current  [i_sign, i_msb, i_lsb]</text>
-  <text x="520" y="460" font-size="10" fill="#495057">0x2B  Shunt Live     [temp_msb, temp_lsb, midpoint_msb, midpoint_lsb, alarm_msb, alarm_lsb]</text>
-  <text x="520" y="474" font-size="10" fill="#495057">0x2F  Shunt History  [deepest_msb, deepest_lsb, cumAh_msb, cumAh_lsb, cycles_msb, cycles_lsb]</text>
-  <text x="520" y="488" font-size="10" fill="#6c757d">0x04  Version Report  [mac3, mac4, mac5, fw_major, fw_minor, fw_patch]  (on boot)</text>
+  <text x="520" y="416" font-size="11" fill="#198754" font-weight="700">TX (@ ~33 ms)</text>
+  <text x="520" y="430" font-size="10" fill="#495057">0x23  Battery Basic  [v_whole, v_dec, i_sign, i_whole, i_dec, soc_whole, soc_dec]</text>
+  <text x="520" y="442" font-size="10" fill="#495057">0x24  Battery Power  [watt_sign, watt_msb, watt_lsb, ttg_msb, ttg_lsb]</text>
+  <text x="520" y="454" font-size="10" fill="#495057">0x2C  Solar Basics   [vpv_whole, vpv_dec, ppv_msb, ppv_lsb, vbat_whole, vbat_dec, cs]</text>
+  <text x="520" y="466" font-size="10" fill="#495057">0x2D  Solar Current  [i_sign, i_msb, i_lsb]</text>
+  <text x="520" y="478" font-size="10" fill="#6c757d">0x2B  Shunt Live     [temp_msb, temp_lsb, midpoint_msb, midpoint_lsb, alarm_msb, alarm_lsb]  ¹</text>
+  <text x="520" y="490" font-size="10" fill="#6c757d">0x2F  Shunt History  [deepest_msb, deepest_lsb, cumAh_msb, cumAh_lsb, cycles_msb, cycles_lsb]  ¹</text>
+  <text x="520" y="502" font-size="10" fill="#6c757d">0x04  Version Report  [mac3, mac4, mac5, fw_major, fw_minor, fw_patch]  (on boot)</text>
+  <text x="520" y="514" font-size="9" fill="#adb5bd" font-style="italic">¹ Transmits zeros — no TX wire to SmartShunt (DTM Pin 4 not fitted)</text>
 
-  <text x="520" y="508" font-size="11" fill="#dc3545" font-weight="700">RX (Control)</text>
-  <text x="520" y="524" font-size="10" fill="#495057">0x00  OTA Trigger     0x01  WiFi Config     0x02  Discovery     0x2E  Load Control</text>
+  <text x="520" y="530" font-size="11" fill="#dc3545" font-weight="700">RX (Control)</text>
+  <text x="520" y="544" font-size="10" fill="#495057">0x00  OTA Trigger     0x01  WiFi Config     0x02  Discovery     0x2E  Load Control</text>
 
   <!-- =============== LEGEND =============== -->
   <rect x="860" y="72" width="216" height="108" fill="#ffffff" stroke="#dee2e6" stroke-width="1.5" rx="6"/>
@@ -215,7 +233,7 @@
   <text x="896" y="130" font-size="10" fill="#212529">UART RX — VE.Direct data in</text>
 
   <rect x="876" y="136" width="14" height="14" fill="#fd7e14" rx="3"/>
-  <text x="896" y="148" font-size="10" fill="#212529">UART TX — HEX GET/SET cmds</text>
+  <text x="896" y="148" font-size="10" fill="#212529">UART TX — load control (MPPT only)</text>
 
   <rect x="876" y="154" width="7" height="14" fill="#ffc107" rx="2"/>
   <rect x="883" y="154" width="7" height="14" fill="#198754" rx="2"/>
