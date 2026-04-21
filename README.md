@@ -1,5 +1,7 @@
 # TrailCurrent Solstice
 
+![TrailCurrent Solstice](CAD/TrailCurrentSolstice_render.png)
+
 Solar gateway module that reads data from a Victron MPPT (Maximum Power Point Tracker) solar charge controller via serial and relays the readings over a CAN bus interface. Part of the [TrailCurrent](https://trailcurrent.com) open-source vehicle platform.
 
 ## Hardware Overview
